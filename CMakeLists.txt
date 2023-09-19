@@ -13,9 +13,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
-find_package(OpenGL REQUIRED COMPONENTS OpenGL)
+add_subdirectory(lib)
+
 find_package(GLFW3 REQUIRED)
 
 add_executable(opengl-demo src/main.cpp)
-
-target_link_libraries(opengl-demo PRIVATE OpenGL::GL glfw)
+target_link_libraries(opengl-demo PRIVATE glad glfw)
