@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <GLFW/glfw3.h>
+#include "common.h"
 
 namespace config {
 

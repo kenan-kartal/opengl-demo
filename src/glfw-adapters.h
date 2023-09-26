@@ -1,10 +1,7 @@
 #ifndef GLFW_ADAPTERS_H
 #define GLFW_ADAPTERS_H
 
-// clang-format off: Include ordering is required.
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-// clang-format on
+#include "common.h"
 
 #include <stdexcept>
 #include <string>
