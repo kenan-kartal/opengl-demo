@@ -1,7 +1,9 @@
+#include "gl-adapters.h"
 #include "glfw-adapters.h"
 
 #include "config.h"
 
+#include <array>
 #include <iostream>
 #include <memory>
 #include <span>
@@ -16,9 +18,17 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
+constexpr std::array VERTICES{// a
+                              -.5f, -.5f, .0f,
+                              // b
+                              .5f, -.5f, .0f,
+                              // c
+                              .0f, .5f, .0f};
+
 struct Program {
   std::unique_ptr<glfw::Init> init;
   std::unique_ptr<glfw::Window> window;
+  std::unique_ptr<gl::Buffer_names> buffer_names;
 };
 
 int main() {
@@ -56,6 +66,12 @@ void init(Program &prog) {
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
+
+  prog.buffer_names = std::make_unique<gl::Buffer_names>(1);
+  const auto buffer_names = prog.buffer_names->vector();
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_names[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), VERTICES.data(),
+               GL_STATIC_DRAW);
 }
 
 void render(Program &prog) {
