@@ -70,11 +70,16 @@ void init(Program &prog) {
   prog.vertex_array_names = std::make_unique<gl::Vertex_array_names>(1);
   const auto &vector_array_names = prog.vertex_array_names->vector();
   glBindVertexArray(vector_array_names[0]);
-  prog.buffer_names = std::make_unique<gl::Buffer_names>(1);
+  prog.buffer_names = std::make_unique<gl::Buffer_names>(2);
   const auto &buffer_names = prog.buffer_names->vector();
-  glBindBuffer(GL_ARRAY_BUFFER, buffer_names[0]);
+  const auto vertex_buffer_name = buffer_names[0];
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
   glBufferData(GL_ARRAY_BUFFER, sizeof(config::VERTICES),
                config::VERTICES.data(), GL_STATIC_DRAW);
+  const auto vert_indices_buffer_name = buffer_names[1];
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::VERT_INDICES),
+               config::VERT_INDICES.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(
       0, 3, GL_FLOAT, GL_FALSE, 0,
       static_cast<void *>(
@@ -103,7 +108,10 @@ void render(Program &prog) {
 
   glUseProgram(prog.shader_program->id());
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawElements(
+      GL_TRIANGLES, config::VERT_INDICES.size(), GL_UNSIGNED_INT,
+      static_cast<void *>(
+          0)); // NOLINT(modernize-use-nullptr): Be explicit about offset.
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {

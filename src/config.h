@@ -28,12 +28,16 @@ constexpr float CLEAR_COLOR[4] = {0.06f, 0.30f, 0.32f, 1.0f};
 
 constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
 constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
-constexpr std::array VERTICES{// a
-                              -.5f, -.5f, .0f,
-                              // b
-                              .5f, -.5f, .0f,
-                              // c
-                              .0f, .5f, .0f};
+constexpr std::array VERTICES{
+    .5f,  .5f,  .0f, // top right
+    .5f,  -.5f, .0f, // bottom right
+    -.5f, -.5f, .0f, // bottom left
+    -.5f, .5f,  .0f, // top left
+};
+constexpr std::array VERT_INDICES{
+    0, 1, 3, // 1st
+    1, 2, 3  // 2nd
+};
 
 } // namespace config
 
