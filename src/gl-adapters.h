@@ -27,6 +27,28 @@ private:
   std::vector<GLuint> _names;
 };
 
+class Shader {
+public:
+  explicit Shader(GLenum type) { _id = glCreateShader(type); }
+  ~Shader() { glDeleteShader(_id); }
+
+  auto id() { return _id; }
+
+private:
+  GLuint _id;
+};
+
+class Shader_program {
+public:
+  explicit Shader_program() { _id = glCreateProgram(); };
+  ~Shader_program() { glDeleteProgram(_id); }
+
+  auto id() { return _id; }
+
+private:
+  GLuint _id;
+};
+
 } // namespace gl
 
 #endif
