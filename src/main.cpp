@@ -3,7 +3,6 @@
 
 #include "config.h"
 
-#include <array>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -19,19 +18,13 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
-void compile_shader(const char *filename, const GLuint id);
+void compile_shader(const char *filename, GLuint shader_id);
 void link_shader_program(GLuint program_id);
-
-constexpr std::array VERTICES{// a
-                              -.5f, -.5f, .0f,
-                              // b
-                              .5f, -.5f, .0f,
-                              // c
-                              .0f, .5f, .0f};
 
 struct Program {
   std::unique_ptr<glfw::Init> init;
   std::unique_ptr<glfw::Window> window;
+  std::unique_ptr<gl::Vertex_array_names> vertex_array_names;
   std::unique_ptr<gl::Buffer_names> buffer_names;
   std::unique_ptr<gl::Shader> vert_shader;
   std::unique_ptr<gl::Shader> frag_shader;
@@ -74,24 +67,31 @@ void init(Program &prog) {
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
 
+  prog.vertex_array_names = std::make_unique<gl::Vertex_array_names>(1);
+  const auto &vector_array_names = prog.vertex_array_names->vector();
+  glBindVertexArray(vector_array_names[0]);
   prog.buffer_names = std::make_unique<gl::Buffer_names>(1);
-  const auto buffer_names = prog.buffer_names->vector();
+  const auto &buffer_names = prog.buffer_names->vector();
   glBindBuffer(GL_ARRAY_BUFFER, buffer_names[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), VERTICES.data(),
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::VERTICES),
+               config::VERTICES.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(
+      0, 3, GL_FLOAT, GL_FALSE, 0,
+      static_cast<void *>(
+          0)); // NOLINT(modernize-use-nullptr): Be explicit about offset.
+  glEnableVertexAttribArray(0);
 
   prog.vert_shader = std::make_unique<gl::Shader>(GL_VERTEX_SHADER);
   const auto vert_shader_id = prog.vert_shader->id();
-  compile_shader("res/simple.vert", vert_shader_id);
+  compile_shader(config::VERT_SHADER_FILENAME, vert_shader_id);
   prog.frag_shader = std::make_unique<gl::Shader>(GL_FRAGMENT_SHADER);
   const auto frag_shader_id = prog.frag_shader->id();
-  compile_shader("res/simple.frag", frag_shader_id);
+  compile_shader(config::FRAG_SHADER_FILENAME, frag_shader_id);
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader_id);
   glAttachShader(shader_program_id, frag_shader_id);
   link_shader_program(shader_program_id);
-  glUseProgram(shader_program_id);
 }
 
 void render(Program &prog) {
@@ -100,6 +100,10 @@ void render(Program &prog) {
       static_cast<const float *>(config::render::CLEAR_COLOR), 4};
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
   glClear(GL_COLOR_BUFFER_BIT);
+
+  glUseProgram(prog.shader_program->id());
+  glBindVertexArray(prog.vertex_array_names->vector()[0]);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {

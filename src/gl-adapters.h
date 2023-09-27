@@ -7,16 +7,26 @@
 
 namespace gl {
 
+class Vertex_array_names {
+public:
+  explicit Vertex_array_names(GLsizei size) : _names(size) {
+    glGenVertexArrays(size, _names.data());
+  }
+  ~Vertex_array_names() {
+    glDeleteVertexArrays(static_cast<GLsizei>(_names.size()), _names.data());
+  }
+
+  const auto &vector() { return _names; }
+
+private:
+  std::vector<GLuint> _names;
+};
+
 class Buffer_names {
 public:
   explicit Buffer_names(GLsizei size) : _names(size) {
     glGenBuffers(size, _names.data());
   }
-  Buffer_names(const Buffer_names &other) = delete;
-  Buffer_names(Buffer_names &&other) = delete;
-  Buffer_names &operator=(const Buffer_names &other) = delete;
-  Buffer_names &operator=(Buffer_names &&other) = delete;
-
   ~Buffer_names() {
     glDeleteBuffers(static_cast<GLsizei>(_names.size()), _names.data());
   }
