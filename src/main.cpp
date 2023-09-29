@@ -18,6 +18,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
+void query();
 void compile_shader(const char *filename, GLuint shader_id);
 void link_shader_program(GLuint program_id);
 
@@ -63,6 +64,8 @@ void init(Program &prog) {
   if (glad_version == 0) {
     throw std::runtime_error("Failed to initialize glad.");
   }
+
+  query();
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
@@ -123,6 +126,15 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
+}
+
+void query() {
+  // NOLINTBEGIN(cppcoreguidelines-init-variables): Initialized by query calls.
+  GLint num_attrs;
+  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
+  std::cout << "Max number of vertex attributes supported: " << num_attrs
+            << '\n';
+  // NOLINTEND(cppcoreguidelines-init-variables)
 }
 
 void compile_shader(const char *filename, const GLuint shader_id) {
