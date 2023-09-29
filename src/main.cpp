@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -109,7 +110,14 @@ void render(Program &prog) {
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  glUseProgram(prog.shader_program->id());
+  const auto shader_prog_id = prog.shader_program->id();
+  glUseProgram(shader_prog_id);
+
+  const auto time = static_cast<float>(glfwGetTime());
+  const float green = (std::sin(time) / 2.F) + .5F;
+  const GLint vert_col_loc = glGetUniformLocation(shader_prog_id, "my_col");
+  glUniform4f(vert_col_loc, 0.F, green, 0.F, 1.F);
+
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
   glDrawElements(
       GL_TRIANGLES, config::VERT_INDICES.size(), GL_UNSIGNED_INT,
