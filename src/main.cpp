@@ -79,16 +79,21 @@ void init(Program &prog) {
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
   glBufferData(GL_ARRAY_BUFFER, sizeof(config::VERTICES),
-               config::VERTICES.data(), GL_STATIC_DRAW);
+               static_cast<const void *>(config::VERTICES), GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::VERT_INDICES),
-               config::VERT_INDICES.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(
-      0, 3, GL_FLOAT, GL_FALSE, 0,
-      static_cast<void *>(
-          0)); // NOLINT(modernize-use-nullptr): Be explicit about offset.
+               static_cast<const void *>(config::VERT_INDICES), GL_STATIC_DRAW);
+  // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
+  // performance-no-int-to-ptr): Be explicit about offset.
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex_data),
+                        reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex_data),
+                        reinterpret_cast<void *>(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+  // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
+  // performance-no-int-to-ptr)
 
   prog.vert_shader = std::make_unique<gl::Shader>(GL_VERTEX_SHADER);
   const auto vert_shader_id = prog.vert_shader->id();
@@ -113,16 +118,13 @@ void render(Program &prog) {
   const auto shader_prog_id = prog.shader_program->id();
   glUseProgram(shader_prog_id);
 
-  const auto time = static_cast<float>(glfwGetTime());
-  const float green = (std::sin(time) / 2.F) + .5F;
-  const GLint vert_col_loc = glGetUniformLocation(shader_prog_id, "my_col");
-  glUniform4f(vert_col_loc, 0.F, green, 0.F, 1.F);
-
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
-  glDrawElements(
-      GL_TRIANGLES, config::VERT_INDICES.size(), GL_UNSIGNED_INT,
-      static_cast<void *>(
-          0)); // NOLINT(modernize-use-nullptr): Be explicit about offset.
+  // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
+  // performance-no-int-to-ptr): Be explicit about offset.
+  glDrawElements(GL_TRIANGLES, sizeof(config::VERT_INDICES) / 3,
+                 GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+  // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
+  // performance-no-int-to-ptr)
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {

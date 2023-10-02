@@ -6,6 +6,17 @@
 #include <array>
 
 namespace config {
+struct Vertex_data {
+  float x;
+  float y;
+  float z;
+  float r;
+  float g;
+  float b;
+};
+} // namespace config
+
+namespace config {
 
 namespace opengl {
 constexpr int VERSION_MAJOR = 3;
@@ -28,16 +39,10 @@ constexpr float CLEAR_COLOR[4] = {0.06f, 0.30f, 0.32f, 1.0f};
 
 constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
 constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
-constexpr std::array VERTICES{
-    .5f,  .5f,  .0f, // top right
-    .5f,  -.5f, .0f, // bottom right
-    -.5f, -.5f, .0f, // bottom left
-    -.5f, .5f,  .0f, // top left
-};
-constexpr std::array VERT_INDICES{
-    0, 1, 3, // 1st
-    1, 2, 3  // 2nd
-};
+constexpr Vertex_data VERTICES[] = {Vertex_data{.5f, -.5f, .0f, 1.f, .0f, .0f},
+                                    Vertex_data{-.5f, -.5f, .0f, .0f, 1.f, .0f},
+                                    Vertex_data{.0f, .5f, .0f, .0f, .0f, 1.f}};
+constexpr unsigned VERT_INDICES[] = {0, 1, 2};
 
 } // namespace config
 
