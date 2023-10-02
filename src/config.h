@@ -37,12 +37,14 @@ namespace render {
 constexpr float CLEAR_COLOR[4] = {0.06f, 0.30f, 0.32f, 1.0f};
 }
 
+namespace simple {
 constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
 constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
 constexpr Vertex_data VERTICES[] = {Vertex_data{.5f, -.5f, .0f, 1.f, .0f, .0f},
                                     Vertex_data{-.5f, -.5f, .0f, .0f, 1.f, .0f},
                                     Vertex_data{.0f, .5f, .0f, .0f, .0f, 1.f}};
 constexpr unsigned VERT_INDICES[] = {0, 1, 2};
+} // namespace simple
 
 } // namespace config
 

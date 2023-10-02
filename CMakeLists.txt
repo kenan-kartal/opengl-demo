@@ -20,6 +20,7 @@ find_package(GLFW3 REQUIRED)
 add_executable(opengl-demo
 	src/main.cpp
 	src/glfw-adapters.cpp
+	src/simple.cpp
 )
 target_link_libraries(opengl-demo PRIVATE glad glfw)
 
