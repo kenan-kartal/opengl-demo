@@ -25,6 +25,6 @@ add_executable(opengl-demo
 	src/texture.cpp
 	src/png-adapters.cpp
 )
-target_link_libraries(opengl-demo PRIVATE glad glfw png)
+target_link_libraries(opengl-demo PRIVATE glad glfw png glm)
 
 file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res SYMBOLIC)
