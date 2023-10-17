@@ -16,12 +16,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 add_subdirectory(lib)
 
 find_package(GLFW3 REQUIRED)
+find_package(PNG REQUIRED)
 
 add_executable(opengl-demo
 	src/main.cpp
 	src/glfw-adapters.cpp
 	src/simple.cpp
+	src/texture.cpp
+	src/png-adapters.cpp
 )
-target_link_libraries(opengl-demo PRIVATE glad glfw)
+target_link_libraries(opengl-demo PRIVATE glad glfw png)
 
 file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res SYMBOLIC)

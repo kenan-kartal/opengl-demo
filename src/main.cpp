@@ -1,9 +1,12 @@
 #include <cstring>
 #include <iostream>
 
-constexpr const char *DEMOS[] = {"simple"};
+constexpr const char *DEMOS[] = {"simple", "texture"};
 
 namespace simple {
+extern int main();
+}
+namespace texture {
 extern int main();
 }
 
@@ -17,12 +20,13 @@ int main(int argc, char *argv[]) {
   }
   const char *prog = argv[1];
   if (std::strcmp(prog, "simple") == 0) {
-    simple::main();
-  } else {
-    print_usage(invoc);
-    return 1;
+    return simple::main();
   }
-  return 0;
+  if (std::strcmp(prog, "texture") == 0) {
+    return texture::main();
+  }
+  print_usage(invoc);
+  return 1;
 }
 
 void print_usage(const char *invoc) {
