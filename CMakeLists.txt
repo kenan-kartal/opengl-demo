@@ -24,6 +24,7 @@ add_executable(opengl-demo
 	src/simple.cpp
 	src/texture.cpp
 	src/png-adapters.cpp
+	src/transformation.cpp
 )
 target_link_libraries(opengl-demo PRIVATE glad glfw png glm)
 

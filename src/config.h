@@ -66,6 +66,23 @@ constexpr Vertex_data VERTICES[] = {
 constexpr unsigned VERT_INDICES[] = {0, 1, 2, 2, 1, 3};
 } // namespace texture
 
+namespace transformation {
+struct Vertex_data {
+  float x;
+  float y;
+  float z;
+  float s;
+  float t;
+};
+constexpr const char *VERT_SHADER_FILENAME = "res/transformation.vert";
+constexpr const char *FRAG_SHADER_FILENAME = "res/transformation.frag";
+constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
+constexpr Vertex_data VERTICES[] = {Vertex_data{-.5f, -.5f, .0f, .0f, .0f},
+                                    Vertex_data{.5f, -.5f, .0f, 1.f, .0f},
+                                    Vertex_data{.0f, .5f, .0f, .0f, 1.f}};
+constexpr unsigned VERT_INDICES[] = {0, 1, 2};
+} // namespace transformation
+
 } // namespace config
 
 #endif
