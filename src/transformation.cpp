@@ -35,8 +35,6 @@ struct Program {
   std::unique_ptr<glfw::Window> window;
   std::unique_ptr<gl::Vertex_array_names> vertex_array_names;
   std::unique_ptr<gl::Buffer_names> buffer_names;
-  std::unique_ptr<gl::Shader> vert_shader;
-  std::unique_ptr<gl::Shader> frag_shader;
   std::unique_ptr<gl::Shader_program> shader_program;
   std::unique_ptr<gl::Textures> textures;
 };
@@ -138,16 +136,14 @@ void init(Program &prog) {
                GL_RGBA, GL_UNSIGNED_BYTE, image1.vector().data());
   glGenerateMipmap(GL_TEXTURE_2D);
 
-  prog.vert_shader = std::make_unique<gl::Shader>(GL_VERTEX_SHADER);
-  const auto vert_shader_id = prog.vert_shader->id();
-  compile_shader(config::texture::VERT_SHADER_FILENAME, vert_shader_id);
-  prog.frag_shader = std::make_unique<gl::Shader>(GL_FRAGMENT_SHADER);
-  const auto frag_shader_id = prog.frag_shader->id();
-  compile_shader(config::texture::FRAG_SHADER_FILENAME, frag_shader_id);
+  gl::Shader vert_shader{GL_VERTEX_SHADER};
+  compile_shader(config::texture::VERT_SHADER_FILENAME, vert_shader.id());
+  gl::Shader frag_shader{GL_FRAGMENT_SHADER};
+  compile_shader(config::texture::FRAG_SHADER_FILENAME, frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
-  glAttachShader(shader_program_id, vert_shader_id);
-  glAttachShader(shader_program_id, frag_shader_id);
+  glAttachShader(shader_program_id, vert_shader.id());
+  glAttachShader(shader_program_id, frag_shader.id());
   link_shader_program(shader_program_id);
 
   glUseProgram(shader_program_id);
