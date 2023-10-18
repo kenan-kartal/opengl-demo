@@ -79,7 +79,7 @@ constexpr const char *FRAG_SHADER_FILENAME = "res/transformation.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
 constexpr Vertex_data VERTICES[] = {Vertex_data{-.5f, -.5f, .0f, .0f, .0f},
                                     Vertex_data{.5f, -.5f, .0f, 1.f, .0f},
-                                    Vertex_data{.0f, .5f, .0f, .0f, 1.f}};
+                                    Vertex_data{.0f, .5f, .0f, .5f, 1.f}};
 constexpr unsigned VERT_INDICES[] = {0, 1, 2};
 } // namespace transformation
 

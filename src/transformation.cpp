@@ -84,62 +84,48 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(config::texture::VERTICES),
-               static_cast<const void *>(config::texture::VERTICES),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::transformation::VERTICES),
+               static_cast<const void *>(config::transformation::VERTICES),
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::texture::VERT_INDICES),
-               static_cast<const void *>(config::texture::VERT_INDICES),
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               sizeof(config::transformation::VERT_INDICES),
+               static_cast<const void *>(config::transformation::VERT_INDICES),
                GL_STATIC_DRAW);
   //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   //  performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
+                        sizeof(config::transformation::Vertex_data),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+                        sizeof(config::transformation::Vertex_data),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
-                        reinterpret_cast<void *>(6 * sizeof(float)));
-  glEnableVertexAttribArray(2);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
-  const png::Image image0(config::texture::TEXTURE0_FILENAME, nullptr,
-                          png_user_error_fn, png_user_warning_fn);
-  const png::Image image1(config::texture::TEXTURE1_FILENAME, nullptr,
-                          png_user_error_fn, png_user_warning_fn);
-  prog.textures = std::make_unique<gl::Textures>(2);
-  const auto texture0_name = prog.textures->vector()[0];
-  const auto texture1_name = prog.textures->vector()[1];
-  glBindTexture(GL_TEXTURE_2D, texture0_name);
+  const png::Image image(config::transformation::TEXTURE_FILENAME, nullptr,
+                         png_user_error_fn, png_user_warning_fn);
+  prog.textures = std::make_unique<gl::Textures>(1);
+  const auto texture_name = prog.textures->vector()[0];
+  glBindTexture(GL_TEXTURE_2D, texture_name);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_LINEAR_MIPMAP_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                   GL_LINEAR_MIPMAP_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image0.width(), image0.height(), 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, image0.vector().data());
-  glGenerateMipmap(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, texture1_name);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                  GL_LINEAR_MIPMAP_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                  GL_LINEAR_MIPMAP_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image1.width(), image1.height(), 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, image1.vector().data());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0,
+               GL_RGBA, GL_UNSIGNED_BYTE, image.vector().data());
   glGenerateMipmap(GL_TEXTURE_2D);
 
   gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(config::texture::VERT_SHADER_FILENAME, vert_shader.id());
+  compile_shader(config::transformation::VERT_SHADER_FILENAME,
+                 vert_shader.id());
   gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(config::texture::FRAG_SHADER_FILENAME, frag_shader.id());
+  compile_shader(config::transformation::FRAG_SHADER_FILENAME,
+                 frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader.id());
@@ -148,7 +134,6 @@ void init(Program &prog) {
 
   glUseProgram(shader_program_id);
   glUniform1i(glGetUniformLocation(shader_program_id, "texture0"), 0);
-  glUniform1i(glGetUniformLocation(shader_program_id, "texture1"), 1);
 }
 
 void render(Program &prog) {
@@ -161,16 +146,14 @@ void render(Program &prog) {
   const auto shader_prog_id = prog.shader_program->id();
   glUseProgram(shader_prog_id);
 
-  const auto &texture_names = prog.textures->vector();
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture_names[0]);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, texture_names[1]);
+  glBindTexture(GL_TEXTURE_2D, prog.textures->vector()[0]);
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::texture::VERT_INDICES) / sizeof(unsigned int),
+                 sizeof(config::transformation::VERT_INDICES) /
+                     sizeof(unsigned int),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
