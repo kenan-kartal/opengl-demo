@@ -17,6 +17,7 @@ add_subdirectory(lib)
 
 find_package(GLFW3 REQUIRED)
 find_package(PNG REQUIRED)
+find_package(glm REQUIRED)
 
 add_executable(opengl-demo
 	src/main.cpp
@@ -26,6 +27,6 @@ add_executable(opengl-demo
 	src/png-adapters.cpp
 	src/transformation.cpp
 )
-target_link_libraries(opengl-demo PRIVATE glad glfw png glm)
+target_link_libraries(opengl-demo PRIVATE glad glfw png glm::glm)
 
 file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res SYMBOLIC)
