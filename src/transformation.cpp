@@ -3,6 +3,9 @@
 #include "glfw-adapters.h"
 #include "png-adapters.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <png.h>
 
 #include <cmath>
@@ -148,6 +151,18 @@ void render(Program &prog) {
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, prog.textures->vector()[0]);
+
+  float time = glfwGetTime();
+  glm::mat4 trans{1.f};
+  glm::vec3 translation{cosf(time) / 2.f, sinf(time) / 2.f, 0.f};
+  float rotation{time};
+  glm::vec3 scale{cosf(time)};
+  trans = glm::translate(trans, translation);
+  trans = glm::rotate(trans, rotation, glm::vec3{0.f, 0.f, 1.f});
+  trans = glm::scale(trans, scale);
+  GLint transform_loc{glGetUniformLocation(shader_prog_id, "transform")};
+  glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
+
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
