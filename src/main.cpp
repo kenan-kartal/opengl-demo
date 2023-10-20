@@ -1,7 +1,8 @@
 #include <cstring>
 #include <iostream>
 
-constexpr const char *DEMOS[] = {"simple", "texture", "transformation"};
+constexpr const char *DEMOS[] = {"simple", "texture", "transformation",
+                                 "camera"};
 
 namespace simple {
 extern int main();
@@ -10,6 +11,9 @@ namespace texture {
 extern int main();
 }
 namespace transformation {
+extern int main();
+}
+namespace camera {
 extern int main();
 }
 
@@ -30,6 +34,9 @@ int main(int argc, char *argv[]) {
   }
   if (std::strcmp(prog, DEMOS[2]) == 0) {
     return transformation::main();
+  }
+  if (std::strcmp(prog, DEMOS[3]) == 0) {
+    return camera::main();
   }
   print_usage(invoc);
   return 1;
