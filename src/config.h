@@ -26,6 +26,7 @@ namespace render {
 constexpr float CLEAR_COLOR[4] = {0.06f, 0.30f, 0.32f, 1.0f};
 }
 
+namespace demo {
 namespace simple {
 struct Vertex_data {
   float x;
@@ -99,6 +100,7 @@ constexpr Vertex_data VERTICES[] = {Vertex_data{-.5f, -.5f, .0f, .0f, .0f},
                                     Vertex_data{.0f, .5f, .0f, .5f, 1.f}};
 constexpr unsigned VERT_INDICES[] = {0, 1, 2};
 } // namespace camera
+} // namespace demo
 
 } // namespace config
 

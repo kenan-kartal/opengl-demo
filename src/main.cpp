@@ -4,6 +4,7 @@
 constexpr const char *DEMOS[] = {"simple", "texture", "transformation",
                                  "camera"};
 
+namespace demo {
 namespace simple {
 extern int main();
 }
@@ -16,6 +17,7 @@ extern int main();
 namespace camera {
 extern int main();
 }
+} // namespace demo
 
 void print_usage(const char *invoc);
 
@@ -27,16 +29,16 @@ int main(int argc, char *argv[]) {
   }
   const char *prog = argv[1];
   if (std::strcmp(prog, DEMOS[0]) == 0) {
-    return simple::main();
+    return demo::simple::main();
   }
   if (std::strcmp(prog, DEMOS[1]) == 0) {
-    return texture::main();
+    return demo::texture::main();
   }
   if (std::strcmp(prog, DEMOS[2]) == 0) {
-    return transformation::main();
+    return demo::transformation::main();
   }
   if (std::strcmp(prog, DEMOS[3]) == 0) {
-    return camera::main();
+    return demo::camera::main();
   }
   print_usage(invoc);
   return 1;

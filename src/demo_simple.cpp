@@ -9,7 +9,7 @@
 #include <span>
 #include <stdexcept>
 
-namespace simple {
+namespace demo::simple {
 
 struct Program;
 
@@ -79,22 +79,23 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(config::simple::VERTICES),
-               static_cast<const void *>(config::simple::VERTICES),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::demo::simple::VERTICES),
+               static_cast<const void *>(config::demo::simple::VERTICES),
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::simple::VERT_INDICES),
-               static_cast<const void *>(config::simple::VERT_INDICES),
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               sizeof(config::demo::simple::VERT_INDICES),
+               static_cast<const void *>(config::demo::simple::VERT_INDICES),
                GL_STATIC_DRAW);
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::simple::Vertex_data),
+                        sizeof(config::demo::simple::Vertex_data),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::simple::Vertex_data),
+                        sizeof(config::demo::simple::Vertex_data),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
@@ -102,10 +103,10 @@ void init(Program &prog) {
 
   prog.vert_shader = std::make_unique<gl::Shader>(GL_VERTEX_SHADER);
   const auto vert_shader_id = prog.vert_shader->id();
-  compile_shader(config::simple::VERT_SHADER_FILENAME, vert_shader_id);
+  compile_shader(config::demo::simple::VERT_SHADER_FILENAME, vert_shader_id);
   prog.frag_shader = std::make_unique<gl::Shader>(GL_FRAGMENT_SHADER);
   const auto frag_shader_id = prog.frag_shader->id();
-  compile_shader(config::simple::FRAG_SHADER_FILENAME, frag_shader_id);
+  compile_shader(config::demo::simple::FRAG_SHADER_FILENAME, frag_shader_id);
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader_id);
@@ -127,7 +128,8 @@ void render(Program &prog) {
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::simple::VERT_INDICES) / sizeof(unsigned int),
+                 sizeof(config::demo::simple::VERT_INDICES) /
+                     sizeof(unsigned int),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
@@ -208,4 +210,4 @@ void link_shader_program(GLuint program_id) {
   std::cout << "Linked.\n";
 }
 
-} // namespace simple
+} // namespace demo::simple

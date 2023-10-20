@@ -15,7 +15,7 @@
 #include <span>
 #include <stdexcept>
 
-namespace transformation {
+namespace demo::transformation {
 
 struct Program;
 
@@ -87,29 +87,31 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(config::transformation::VERTICES),
-               static_cast<const void *>(config::transformation::VERTICES),
-               GL_STATIC_DRAW);
+  glBufferData(
+      GL_ARRAY_BUFFER, sizeof(config::demo::transformation::VERTICES),
+      static_cast<const void *>(config::demo::transformation::VERTICES),
+      GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               sizeof(config::transformation::VERT_INDICES),
-               static_cast<const void *>(config::transformation::VERT_INDICES),
-               GL_STATIC_DRAW);
+  glBufferData(
+      GL_ELEMENT_ARRAY_BUFFER,
+      sizeof(config::demo::transformation::VERT_INDICES),
+      static_cast<const void *>(config::demo::transformation::VERT_INDICES),
+      GL_STATIC_DRAW);
   //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   //  performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::transformation::Vertex_data),
+                        sizeof(config::demo::transformation::Vertex_data),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(config::transformation::Vertex_data),
+                        sizeof(config::demo::transformation::Vertex_data),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
-  const png::Image image(config::transformation::TEXTURE_FILENAME, nullptr,
-                         png_user_error_fn, png_user_warning_fn);
+  const png::Image image(config::demo::transformation::TEXTURE_FILENAME,
+                         nullptr, png_user_error_fn, png_user_warning_fn);
   prog.textures = std::make_unique<gl::Textures>(1);
   const auto texture_name = prog.textures->vector()[0];
   glBindTexture(GL_TEXTURE_2D, texture_name);
@@ -124,10 +126,10 @@ void init(Program &prog) {
   glGenerateMipmap(GL_TEXTURE_2D);
 
   gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(config::transformation::VERT_SHADER_FILENAME,
+  compile_shader(config::demo::transformation::VERT_SHADER_FILENAME,
                  vert_shader.id());
   gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(config::transformation::FRAG_SHADER_FILENAME,
+  compile_shader(config::demo::transformation::FRAG_SHADER_FILENAME,
                  frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
@@ -167,7 +169,7 @@ void render(Program &prog) {
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::transformation::VERT_INDICES) /
+                 sizeof(config::demo::transformation::VERT_INDICES) /
                      sizeof(unsigned int),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
@@ -258,4 +260,4 @@ void png_user_warning_fn(png_structp png_ptr, png_const_charp warning_msg) {
   std::cerr << "PNG warning: " << warning_msg << '\n';
 }
 
-} // namespace transformation
+} // namespace demo::transformation

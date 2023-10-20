@@ -15,7 +15,7 @@
 #include <span>
 #include <stdexcept>
 
-namespace camera {
+namespace demo::camera {
 
 struct Program;
 
@@ -87,27 +87,28 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(config::camera::VERTICES),
-               static_cast<const void *>(config::camera::VERTICES),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::demo::camera::VERTICES),
+               static_cast<const void *>(config::demo::camera::VERTICES),
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::camera::VERT_INDICES),
-               static_cast<const void *>(config::camera::VERT_INDICES),
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               sizeof(config::demo::camera::VERT_INDICES),
+               static_cast<const void *>(config::demo::camera::VERT_INDICES),
                GL_STATIC_DRAW);
   //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   //  performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::camera::Vertex_data),
+                        sizeof(config::demo::camera::Vertex_data),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(config::camera::Vertex_data),
+                        sizeof(config::demo::camera::Vertex_data),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
-  const png::Image image(config::camera::TEXTURE_FILENAME, nullptr,
+  const png::Image image(config::demo::camera::TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
   prog.textures = std::make_unique<gl::Textures>(1);
   const auto texture_name = prog.textures->vector()[0];
@@ -123,9 +124,9 @@ void init(Program &prog) {
   glGenerateMipmap(GL_TEXTURE_2D);
 
   gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(config::camera::VERT_SHADER_FILENAME, vert_shader.id());
+  compile_shader(config::demo::camera::VERT_SHADER_FILENAME, vert_shader.id());
   gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(config::camera::FRAG_SHADER_FILENAME, frag_shader.id());
+  compile_shader(config::demo::camera::FRAG_SHADER_FILENAME, frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader.id());
@@ -164,7 +165,8 @@ void render(Program &prog) {
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::camera::VERT_INDICES) / sizeof(unsigned int),
+                 sizeof(config::demo::camera::VERT_INDICES) /
+                     sizeof(unsigned int),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
@@ -254,4 +256,4 @@ void png_user_warning_fn(png_structp png_ptr, png_const_charp warning_msg) {
   std::cerr << "PNG warning: " << warning_msg << '\n';
 }
 
-} // namespace camera
+} // namespace demo::camera

@@ -12,7 +12,7 @@
 #include <span>
 #include <stdexcept>
 
-namespace texture {
+namespace demo::texture {
 
 struct Program;
 
@@ -86,33 +86,34 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(config::texture::VERTICES),
-               static_cast<const void *>(config::texture::VERTICES),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::demo::texture::VERTICES),
+               static_cast<const void *>(config::demo::texture::VERTICES),
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::texture::VERT_INDICES),
-               static_cast<const void *>(config::texture::VERT_INDICES),
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               sizeof(config::demo::texture::VERT_INDICES),
+               static_cast<const void *>(config::demo::texture::VERT_INDICES),
                GL_STATIC_DRAW);
   //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   //  performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
+                        sizeof(config::demo::texture::Vertex_data),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
+                        sizeof(config::demo::texture::Vertex_data),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(config::texture::Vertex_data),
+                        sizeof(config::demo::texture::Vertex_data),
                         reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
-  const png::Image image0(config::texture::TEXTURE0_FILENAME, nullptr,
+  const png::Image image0(config::demo::texture::TEXTURE0_FILENAME, nullptr,
                           png_user_error_fn, png_user_warning_fn);
-  const png::Image image1(config::texture::TEXTURE1_FILENAME, nullptr,
+  const png::Image image1(config::demo::texture::TEXTURE1_FILENAME, nullptr,
                           png_user_error_fn, png_user_warning_fn);
   prog.textures = std::make_unique<gl::Textures>(2);
   const auto texture0_name = prog.textures->vector()[0];
@@ -140,10 +141,10 @@ void init(Program &prog) {
 
   prog.vert_shader = std::make_unique<gl::Shader>(GL_VERTEX_SHADER);
   const auto vert_shader_id = prog.vert_shader->id();
-  compile_shader(config::texture::VERT_SHADER_FILENAME, vert_shader_id);
+  compile_shader(config::demo::texture::VERT_SHADER_FILENAME, vert_shader_id);
   prog.frag_shader = std::make_unique<gl::Shader>(GL_FRAGMENT_SHADER);
   const auto frag_shader_id = prog.frag_shader->id();
-  compile_shader(config::texture::FRAG_SHADER_FILENAME, frag_shader_id);
+  compile_shader(config::demo::texture::FRAG_SHADER_FILENAME, frag_shader_id);
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader_id);
@@ -174,7 +175,8 @@ void render(Program &prog) {
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::texture::VERT_INDICES) / sizeof(unsigned int),
+                 sizeof(config::demo::texture::VERT_INDICES) /
+                     sizeof(unsigned int),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
@@ -264,4 +266,4 @@ void png_user_warning_fn(png_structp png_ptr, png_const_charp warning_msg) {
   std::cerr << "PNG warning: " << warning_msg << '\n';
 }
 
-} // namespace texture
+} // namespace demo::texture
