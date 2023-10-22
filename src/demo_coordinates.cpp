@@ -149,10 +149,10 @@ void render(Program &prog) {
   for (int i = 0; i < 10; ++i) {
     glm::vec3 translation{(i + 1) / 2.F * cosf(time * (i / 2.F + 1)),
                           (i + 1) / 2.F * sinf(time * (i / 2.F + 1)), -i};
-    float rotation{time * (10 - i)};
+    float rotation{time * (i + 1)};
     glm::mat4 model{1.F};
     model = glm::translate(model, translation);
-    model = glm::rotate(model, time, glm::vec3{0.F, 1.F, 0.F});
+    model = glm::rotate(model, rotation, glm::vec3{0.F, 1.F, 0.F});
     GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
     GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
