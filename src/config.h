@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#include <array>
-
 namespace config {
 
 struct Vertex {

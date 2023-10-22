@@ -1,3 +1,4 @@
+#include "common.h"
 #include "config.h"
 #include "gl-adapters.h"
 #include "glfw-adapters.h"
@@ -6,32 +7,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <png.h>
 
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <memory>
-#include <span>
 #include <stdexcept>
 
 namespace demo::camera {
-
 struct Program;
 
 void init(Program &prog);
 void render(Program &prog);
-
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
-
-void query();
-void compile_shader(const char *filename, GLuint shader_id);
-void link_shader_program(GLuint program_id);
-
-void png_user_error_fn(png_structp png_ptr, png_const_charp error_msg);
-void png_user_warning_fn(png_structp png_ptr, png_const_charp warning_msg);
 
 struct Program {
   std::unique_ptr<glfw::Init> init;
@@ -75,7 +63,7 @@ void init(Program &prog) {
     throw std::runtime_error("Failed to initialize glad.");
   }
 
-  query();
+  gl_query();
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
@@ -130,8 +118,7 @@ void init(Program &prog) {
 }
 
 void render(Program &prog) {
-  const std::span clear_color{
-      static_cast<const float *>(config::render::CLEAR_COLOR), 4};
+  const float *clear_color = config::render::CLEAR_COLOR;
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -157,84 +144,10 @@ void render(Program &prog) {
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
-}
-
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
 }
-
-void query() {
-  GLint num_attrs;
-  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
-  std::cout << "Max number of vertex attributes supported: " << num_attrs
-            << '\n';
-}
-
-void compile_shader(const char *filename, const GLuint shader_id) {
-  using std::string_literals::operator""s;
-
-  std::ifstream file{filename, std::ios::in | std::ios::ate};
-  if (!file) {
-    throw std::runtime_error("Failed to open file: "s + filename);
-  }
-  const size_t size = file.tellg();
-  std::string source(size, '\0');
-  file.seekg(0);
-  file.read(source.data(), static_cast<std::streamsize>(size));
-  const GLchar *sources = source.data();
-  const auto lengths = static_cast<GLint>(size);
-  glShaderSource(shader_id, 1, &sources, &lengths);
-  std::cout << "Compiling shader: " << filename << '\n';
-  glCompileShader(shader_id);
-  GLint res;
-  glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
-  if (res == GL_FALSE) {
-    GLint info_len;
-    glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &info_len);
-    if (info_len > 0) {
-      std::vector<GLchar> info(info_len);
-      glGetShaderInfoLog(shader_id, info_len, nullptr, info.data());
-      std::cerr << static_cast<char *>(info.data()) << '\n';
-    } else {
-      std::cerr << "No info.\n";
-    }
-    throw std::runtime_error("Compilation failed.");
-  }
-  std::cout << "Compiled.\n";
-}
-
-void link_shader_program(GLuint program_id) {
-  std::cout << "Linking shader program.\n";
-  glLinkProgram(program_id);
-  GLint res;
-  glGetProgramiv(program_id, GL_LINK_STATUS, &res);
-  if (res == GL_FALSE) {
-    GLint info_len;
-    glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_len);
-    if (info_len > 0) {
-      std::vector<GLchar> info(info_len);
-      glGetProgramInfoLog(program_id, info_len, nullptr, info.data());
-      std::cerr << static_cast<char *>(info.data()) << '\n';
-    } else {
-      std::cerr << "No info.\n";
-    }
-    throw std::runtime_error("Linking failed.");
-  }
-  std::cout << "Linked.\n";
-}
-
-void png_user_error_fn(png_structp png_ptr, png_const_charp error_msg) {
-  using std::string_literals::operator""s;
-  throw std::runtime_error("PNG error: "s + error_msg);
-}
-
-void png_user_warning_fn(png_structp png_ptr, png_const_charp warning_msg) {
-  std::cerr << "PNG warning: " << warning_msg << '\n';
-}
-
 } // namespace demo::camera
