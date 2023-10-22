@@ -87,26 +87,21 @@ void init(Program &prog) {
   const auto &buffer_names = prog.buffer_names->vector();
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
-  glBufferData(
-      GL_ARRAY_BUFFER, sizeof(config::demo::transformation::VERTICES),
-      static_cast<const void *>(config::demo::transformation::VERTICES),
-      GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(config::triangle::VERTICES),
+               static_cast<const void *>(config::triangle::VERTICES),
+               GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(
-      GL_ELEMENT_ARRAY_BUFFER,
-      sizeof(config::demo::transformation::VERT_INDICES),
-      static_cast<const void *>(config::demo::transformation::VERT_INDICES),
-      GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::triangle::FACES),
+               static_cast<const void *>(config::triangle::FACES),
+               GL_STATIC_DRAW);
   //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   //  performance-no-int-to-ptr): Be explicit about offset.
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(config::demo::transformation::Vertex_data),
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(config::demo::transformation::Vertex_data),
-                        reinterpret_cast<void *>(3 * sizeof(float)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
+                        reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(1);
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
@@ -169,8 +164,7 @@ void render(Program &prog) {
   // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::demo::transformation::VERT_INDICES) /
-                     sizeof(unsigned int),
+                 sizeof(config::triangle::FACES) / sizeof(unsigned),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
   // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
   // performance-no-int-to-ptr)
