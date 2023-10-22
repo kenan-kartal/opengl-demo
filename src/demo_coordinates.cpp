@@ -139,12 +139,16 @@ void render(Program &prog) {
   float time = glfwGetTime();
   float aspect = static_cast<float>(width) / static_cast<float>(height);
 
+  glBindVertexArray(prog.vertex_array_names->vector()[0]);
+
   glm::mat4 view{1.F};
   view = glm::translate(view, glm::vec3{0.F, 0.F, -6.F});
   glm::mat4 projection =
       glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
-
-  glBindVertexArray(prog.vertex_array_names->vector()[0]);
+  GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
+  glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+  GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
+  glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
   for (int i = 0; i < 10; ++i) {
     glm::vec3 translation{(i + 1) / 2.F * cosf(time * (i / 2.F + 1)),
@@ -155,11 +159,6 @@ void render(Program &prog) {
     model = glm::rotate(model, rotation, glm::vec3{0.F, 1.F, 0.F});
     GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-    GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
-    glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-    GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
-    glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
-
     glDrawElements(GL_TRIANGLES,
                    sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
                    GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
