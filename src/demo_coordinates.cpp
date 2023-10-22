@@ -86,7 +86,7 @@ void init(Program &prog) {
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
-                        reinterpret_cast<void *>(3 * sizeof(float)));
+                        reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(1);
   const png::Image image(config::demo::coordinates::TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
