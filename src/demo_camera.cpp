@@ -1,3 +1,4 @@
+#include "camera.h"
 #include "common.h"
 #include "config.h"
 #include "gl-adapters.h"
@@ -28,6 +29,7 @@ struct Program {
   std::unique_ptr<gl::Buffer_names> buffer_names;
   std::unique_ptr<gl::Shader_program> shader_program;
   std::unique_ptr<gl::Texture_names> texture_names;
+  Camera cam{};
 };
 
 int main() {
@@ -139,8 +141,10 @@ void render(Program &prog) {
 
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
 
-  glm::mat4 view{1.F};
-  view = glm::translate(view, glm::vec3{0.F, 0.F, -6.F});
+  Camera &cam = prog.cam;
+  cam.set_pos({sinf(time) * 25, 0.F, cosf(time) * 25});
+  cam.set_view(-cam.pos());
+  glm::mat4 view = cam.look();
   glm::mat4 projection =
       glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
   GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
@@ -148,18 +152,20 @@ void render(Program &prog) {
   GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
   glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
-  for (int i = 0; i < 10; ++i) {
-    glm::vec3 translation{(i + 1) / 2.F * cosf(time * (i / 2.F + 1)),
-                          (i + 1) / 2.F * sinf(time * (i / 2.F + 1)), -i};
-    float rotation{time * (i + 1)};
-    glm::mat4 model{1.F};
-    model = glm::translate(model, translation);
-    model = glm::rotate(model, rotation, glm::vec3{0.F, 1.F, 0.F});
-    GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
-    glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-    glDrawElements(GL_TRIANGLES,
-                   sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
-                   GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+  for (int i = 0; i < 9; ++i) {
+    for (int j = 0; j < 9; ++j) {
+      for (int k = 0; k < 9; ++k) {
+        glm::vec3 translation{-6.F + i * 1.5F, -6.F + j * 1.5F,
+                              -6.F + k * 1.5F};
+        glm::mat4 model{1.F};
+        model = glm::translate(model, translation);
+        GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawElements(GL_TRIANGLES,
+                       sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
+                       GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+      }
+    }
   }
 }
 
