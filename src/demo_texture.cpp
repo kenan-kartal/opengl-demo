@@ -78,8 +78,9 @@ void init(Program &prog) {
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::quad::FACES),
-               static_cast<const void *>(config::quad::FACES), GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::quad::TRI_INDS),
+               static_cast<const void *>(config::quad::TRI_INDS),
+               GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
@@ -148,7 +149,8 @@ void render(Program &prog) {
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, texture_names[1]);
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
-  glDrawElements(GL_TRIANGLES, sizeof(config::quad::FACES) / sizeof(unsigned),
+  glDrawElements(GL_TRIANGLES,
+                 sizeof(config::quad::TRI_INDS) / sizeof(unsigned),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
 }
 

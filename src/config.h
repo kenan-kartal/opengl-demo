@@ -25,7 +25,7 @@ struct Vertex {
   Tex_coord tex;
 };
 
-struct Face {
+struct Tri_inds {
   unsigned a;
   unsigned b;
   unsigned c;
@@ -55,7 +55,7 @@ constexpr Vertex VERTICES[] = {
     Vertex{-0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 0.F},
     Vertex{0.5F, -0.5F, 0.F, 0.F, 1.F, 0.F, 1.F, 0.F},
     Vertex{0.F, 0.5F, 0.F, 0.F, 0.F, 1.F, 0.5F, 1.F}};
-constexpr Face FACES[] = {Face{0, 1, 2}};
+constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}};
 } // namespace triangle
 
 namespace quad {
@@ -64,7 +64,7 @@ constexpr Vertex VERTICES[] = {
     Vertex{0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 1.F, 0.F},
     Vertex{-0.5F, 0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 1.F},
     Vertex{0.5F, 0.5F, 0.F, 1.F, 1.F, 0.F, 1.F, 1.F}};
-constexpr Face FACES[] = {Face{0, 1, 2}, Face{2, 1, 3}};
+constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}, {2, 1, 3}};
 } // namespace quad
 
 namespace cube {
@@ -77,10 +77,9 @@ constexpr Vertex VERTICES[] = {
     Vertex{0.5F, -0.5F, -0.5F, 1.F, 0.F, 0.F, 1.F, 0.F},
     Vertex{-0.5F, 0.5F, -0.5F, 1.F, 0.F, 0.F, 0.F, 1.F},
     Vertex{0.5F, 0.5F, -0.5F, 1.F, 1.F, 0.F, 1.F, 1.F}};
-constexpr Face FACES[] = {Face{0, 1, 2}, Face{2, 1, 3}, Face{4, 6, 5},
-                          Face{5, 6, 7}, Face{4, 0, 6}, Face{6, 0, 2},
-                          Face{1, 5, 3}, Face{3, 5, 7}, Face{0, 4, 1},
-                          Face{1, 4, 5}, Face{2, 3, 6}, Face{6, 3, 7}};
+constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}, {2, 1, 3}, {4, 6, 5}, {5, 6, 7},
+                                 {4, 0, 6}, {6, 0, 2}, {1, 5, 3}, {3, 5, 7},
+                                 {0, 4, 1}, {1, 4, 5}, {2, 3, 6}, {6, 3, 7}};
 } // namespace cube
 
 namespace demo {

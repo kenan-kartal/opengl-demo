@@ -80,8 +80,8 @@ void init(Program &prog) {
                GL_STATIC_DRAW);
   const auto vert_indices_buffer_name = buffer_names[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::triangle::FACES),
-               static_cast<const void *>(config::triangle::FACES),
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::triangle::TRI_INDS),
+               static_cast<const void *>(config::triangle::TRI_INDS),
                GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
@@ -144,7 +144,7 @@ void render(Program &prog) {
 
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
   glDrawElements(GL_TRIANGLES,
-                 sizeof(config::triangle::FACES) / sizeof(unsigned),
+                 sizeof(config::triangle::TRI_INDS) / sizeof(unsigned),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
 }
 
