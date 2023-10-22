@@ -102,11 +102,11 @@ constexpr const char *FRAG_SHADER_FILENAME = "res/transformation.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
 } // namespace transformation
 
-namespace camera {
-constexpr const char *VERT_SHADER_FILENAME = "res/camera.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/camera.frag";
+namespace coordinates {
+constexpr const char *VERT_SHADER_FILENAME = "res/coordinates.vert";
+constexpr const char *FRAG_SHADER_FILENAME = "res/coordinates.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
-} // namespace camera
+} // namespace coordinates
 } // namespace demo
 
 } // namespace config

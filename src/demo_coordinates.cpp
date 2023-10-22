@@ -13,7 +13,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace demo::camera {
+namespace demo::coordinates {
 struct Program;
 
 void init(Program &prog);
@@ -88,7 +88,7 @@ void init(Program &prog) {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
-  const png::Image image(config::demo::camera::TEXTURE_FILENAME, nullptr,
+  const png::Image image(config::demo::coordinates::TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
   prog.texture_names = std::make_unique<gl::Texture_names>(1);
   const auto texture_name = prog.texture_names->vector()[0];
@@ -104,9 +104,11 @@ void init(Program &prog) {
   glGenerateMipmap(GL_TEXTURE_2D);
 
   gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(config::demo::camera::VERT_SHADER_FILENAME, vert_shader.id());
+  compile_shader(config::demo::coordinates::VERT_SHADER_FILENAME,
+                 vert_shader.id());
   gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(config::demo::camera::FRAG_SHADER_FILENAME, frag_shader.id());
+  compile_shader(config::demo::coordinates::FRAG_SHADER_FILENAME,
+                 frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader.id());
@@ -150,4 +152,4 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
 }
-} // namespace demo::camera
+} // namespace demo::coordinates
