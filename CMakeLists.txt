@@ -28,6 +28,7 @@ add_executable(opengl-demo
 	src/demo_transformation.cpp
 	src/demo_coordinates.cpp
 	src/common.cpp
+	src/demo_camera.cpp
 )
 target_link_libraries(opengl-demo PRIVATE glad glfw png glm::glm)
 

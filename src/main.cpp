@@ -2,7 +2,7 @@
 #include <iostream>
 
 constexpr const char *DEMOS[] = {"simple", "texture", "transformation",
-                                 "coordinates"};
+                                 "coordinates", "camera"};
 
 namespace demo {
 namespace simple {
@@ -15,6 +15,9 @@ namespace transformation {
 extern int main();
 }
 namespace coordinates {
+extern int main();
+}
+namespace camera {
 extern int main();
 }
 } // namespace demo
@@ -39,6 +42,9 @@ int main(int argc, char *argv[]) {
   }
   if (std::strcmp(prog, DEMOS[3]) == 0) {
     return demo::coordinates::main();
+  }
+  if (std::strcmp(prog, DEMOS[4]) == 0) {
+    return demo::camera::main();
   }
   print_usage(invoc);
   return 1;

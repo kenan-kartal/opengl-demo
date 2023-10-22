@@ -125,6 +125,12 @@ constexpr const char *VERT_SHADER_FILENAME = "res/coordinates.vert";
 constexpr const char *FRAG_SHADER_FILENAME = "res/coordinates.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
 } // namespace coordinates
+
+namespace camera {
+constexpr const char *VERT_SHADER_FILENAME = "res/coordinates.vert";
+constexpr const char *FRAG_SHADER_FILENAME = "res/coordinates.frag";
+constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
+} // namespace camera
 } // namespace demo
 
 } // namespace config
