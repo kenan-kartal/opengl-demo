@@ -68,6 +68,8 @@ void init(Program &prog) {
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
 
+  glEnable(GL_DEPTH_TEST);
+
   prog.vertex_array_names = std::make_unique<gl::Vertex_array_names>(1);
   const auto &vector_array_names = prog.vertex_array_names->vector();
   glBindVertexArray(vector_array_names[0]);
@@ -123,7 +125,7 @@ void init(Program &prog) {
 void render(Program &prog) {
   const float *clear_color = config::render::CLEAR_COLOR;
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   const auto shader_prog_id = prog.shader_program->id();
   glUseProgram(shader_prog_id);
