@@ -93,8 +93,6 @@ void init(Program &prog) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(config::quad::FACES),
                static_cast<const void *>(config::quad::FACES), GL_STATIC_DRAW);
-  //  NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
-  //  performance-no-int-to-ptr): Be explicit about offset.
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
@@ -104,8 +102,6 @@ void init(Program &prog) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
-  // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
-  // performance-no-int-to-ptr)
   const png::Image image0(config::demo::texture::TEXTURE0_FILENAME, nullptr,
                           png_user_error_fn, png_user_warning_fn);
   const png::Image image1(config::demo::texture::TEXTURE1_FILENAME, nullptr,
@@ -152,7 +148,6 @@ void init(Program &prog) {
 }
 
 void render(Program &prog) {
-  // GLFWwindow *window = prog.window->handle();
   const std::span clear_color{
       static_cast<const float *>(config::render::CLEAR_COLOR), 4};
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
@@ -167,12 +162,8 @@ void render(Program &prog) {
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, texture_names[1]);
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
-  // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
-  // performance-no-int-to-ptr): Be explicit about offset.
   glDrawElements(GL_TRIANGLES, sizeof(config::quad::FACES) / sizeof(unsigned),
                  GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
-  // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
-  // performance-no-int-to-ptr)
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -187,12 +178,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
 }
 
 void query() {
-  // NOLINTBEGIN(cppcoreguidelines-init-variables): Initialized by query calls.
   GLint num_attrs;
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
   std::cout << "Max number of vertex attributes supported: " << num_attrs
             << '\n';
-  // NOLINTEND(cppcoreguidelines-init-variables)
 }
 
 void compile_shader(const char *filename, const GLuint shader_id) {
@@ -211,11 +200,10 @@ void compile_shader(const char *filename, const GLuint shader_id) {
   glShaderSource(shader_id, 1, &sources, &lengths);
   std::cout << "Compiling shader: " << filename << '\n';
   glCompileShader(shader_id);
-  GLint res; // NOLINT(cppcoreguidelines-init-variables): Initialized next line.
+  GLint res;
   glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
   if (res == GL_FALSE) {
-    GLint info_len; // NOLINT(cppcoreguidelines-init-variables): Initialized
-                    // next line.
+    GLint info_len;
     glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &info_len);
     if (info_len > 0) {
       std::vector<GLchar> info(info_len);
@@ -232,11 +220,10 @@ void compile_shader(const char *filename, const GLuint shader_id) {
 void link_shader_program(GLuint program_id) {
   std::cout << "Linking shader program.\n";
   glLinkProgram(program_id);
-  GLint res; // NOLINT(cppcoreguidelines-init-variables): Initialized next line.
+  GLint res;
   glGetProgramiv(program_id, GL_LINK_STATUS, &res);
   if (res == GL_FALSE) {
-    GLint info_len; // NOLINT(cppcoreguidelines-init-variables): Initialized
-                    // next line.
+    GLint info_len;
     glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_len);
     if (info_len > 0) {
       std::vector<GLchar> info(info_len);
