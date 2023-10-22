@@ -132,15 +132,25 @@ void render(Program &prog) {
   glBindTexture(GL_TEXTURE_2D, prog.texture_names->vector()[0]);
 
   float time = glfwGetTime();
-  glm::mat4 trans{1.f};
-  glm::vec3 translation{cosf(time) / 2.f, sinf(time) / 2.f, 0.f};
+  glm::vec3 translation{cosf(time), sinf(time), 0.F};
   float rotation{time};
-  glm::vec3 scale{cosf(time)};
-  trans = glm::translate(trans, translation);
-  trans = glm::rotate(trans, rotation, glm::vec3{0.f, 0.f, 1.f});
-  trans = glm::scale(trans, scale);
-  GLint transform_loc{glGetUniformLocation(shader_prog_id, "transform")};
-  glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
+  glm::mat4 model{1.F};
+  model = glm::translate(model, translation);
+  model = glm::rotate(model, time, glm::vec3{0.F, 1.F, 0.F});
+  glm::mat4 view{1.F};
+  view = glm::translate(view, glm::vec3{0.F, 0.F, -6.F});
+  auto *window = prog.window->handle();
+  int width, height;
+  glfwGetWindowSize(window, &width, &height);
+  float aspect = static_cast<float>(width) / static_cast<float>(height);
+  glm::mat4 projection =
+      glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
+  GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
+  glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+  GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
+  glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+  GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
+  glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
   glDrawElements(GL_TRIANGLES,
