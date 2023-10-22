@@ -133,31 +133,37 @@ void render(Program &prog) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, prog.texture_names->vector()[0]);
 
-  float time = glfwGetTime();
-  glm::vec3 translation{cosf(time), sinf(time), 0.F};
-  float rotation{time};
-  glm::mat4 model{1.F};
-  model = glm::translate(model, translation);
-  model = glm::rotate(model, time, glm::vec3{0.F, 1.F, 0.F});
-  glm::mat4 view{1.F};
-  view = glm::translate(view, glm::vec3{0.F, 0.F, -6.F});
   auto *window = prog.window->handle();
   int width, height;
   glfwGetWindowSize(window, &width, &height);
+  float time = glfwGetTime();
   float aspect = static_cast<float>(width) / static_cast<float>(height);
+
+  glm::mat4 view{1.F};
+  view = glm::translate(view, glm::vec3{0.F, 0.F, -6.F});
   glm::mat4 projection =
       glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
-  GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
-  glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-  GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
-  glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-  GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
-  glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
-  glDrawElements(GL_TRIANGLES,
-                 sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
-                 GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+
+  for (int i = 0; i < 10; ++i) {
+    glm::vec3 translation{(i + 1) / 2.F * cosf(time * (i / 2.F + 1)),
+                          (i + 1) / 2.F * sinf(time * (i / 2.F + 1)), -i};
+    float rotation{time * (10 - i)};
+    glm::mat4 model{1.F};
+    model = glm::translate(model, translation);
+    model = glm::rotate(model, time, glm::vec3{0.F, 1.F, 0.F});
+    GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+    GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
+    glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+    GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
+    glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+
+    glDrawElements(GL_TRIANGLES,
+                   sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
+                   GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+  }
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
