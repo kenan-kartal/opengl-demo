@@ -51,35 +51,54 @@ constexpr float CLEAR_COLOR[4] = {0.06f, 0.30f, 0.32f, 1.0f};
 }
 
 namespace triangle {
-constexpr Vertex VERTICES[] = {
-    Vertex{-0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 0.F},
-    Vertex{0.5F, -0.5F, 0.F, 0.F, 1.F, 0.F, 1.F, 0.F},
-    Vertex{0.F, 0.5F, 0.F, 0.F, 0.F, 1.F, 0.5F, 1.F}};
+constexpr Vertex VERTICES[] = {{-0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 0.F},
+                               {0.5F, -0.5F, 0.F, 0.F, 1.F, 0.F, 1.F, 0.F},
+                               {0.F, 0.5F, 0.F, 0.F, 0.F, 1.F, 0.5F, 1.F}};
 constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}};
 } // namespace triangle
 
 namespace quad {
-constexpr Vertex VERTICES[] = {
-    Vertex{-0.5F, -0.5F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F},
-    Vertex{0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 1.F, 0.F},
-    Vertex{-0.5F, 0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 1.F},
-    Vertex{0.5F, 0.5F, 0.F, 1.F, 1.F, 0.F, 1.F, 1.F}};
+constexpr Vertex VERTICES[] = {{-0.5F, -0.5F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F},
+                               {0.5F, -0.5F, 0.F, 1.F, 0.F, 0.F, 1.F, 0.F},
+                               {-0.5F, 0.5F, 0.F, 1.F, 0.F, 0.F, 0.F, 1.F},
+                               {0.5F, 0.5F, 0.F, 1.F, 1.F, 0.F, 1.F, 1.F}};
 constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}, {2, 1, 3}};
 } // namespace quad
 
 namespace cube {
-constexpr Vertex VERTICES[] = {
-    Vertex{-0.5F, -0.5F, 0.5F, 0.F, 0.F, 0.F, 0.F, 0.F},
-    Vertex{0.5F, -0.5F, 0.5F, 1.F, 0.F, 0.F, 1.F, 0.F},
-    Vertex{-0.5F, 0.5F, 0.5F, 1.F, 0.F, 0.F, 0.F, 1.F},
-    Vertex{0.5F, 0.5F, 0.5F, 1.F, 1.F, 0.F, 1.F, 1.F},
-    Vertex{-0.5F, -0.5F, -0.5F, 0.F, 0.F, 0.F, 0.F, 0.F},
-    Vertex{0.5F, -0.5F, -0.5F, 1.F, 0.F, 0.F, 1.F, 0.F},
-    Vertex{-0.5F, 0.5F, -0.5F, 1.F, 0.F, 0.F, 0.F, 1.F},
-    Vertex{0.5F, 0.5F, -0.5F, 1.F, 1.F, 0.F, 1.F, 1.F}};
-constexpr Tri_inds TRI_INDS[] = {{0, 1, 2}, {2, 1, 3}, {4, 6, 5}, {5, 6, 7},
-                                 {4, 0, 6}, {6, 0, 2}, {1, 5, 3}, {3, 5, 7},
-                                 {0, 4, 1}, {1, 4, 5}, {2, 3, 6}, {6, 3, 7}};
+constexpr Vertex VERTICES[] = {{-0.5F, -0.5F, 0.5F, 0.F, 0.F, 0.F, 0.F, 0.F},
+                               {0.5F, -0.5F, 0.5F, 1.F, 0.F, 0.F, 1.F, 0.F},
+                               {-0.5F, 0.5F, 0.5F, 0.F, 1.F, 0.F, 0.F, 1.F},
+                               {0.5F, 0.5F, 0.5F, 1.F, 1.F, 0.F, 1.F, 1.F},
+
+                               {0.5F, -0.5F, 0.5F, 1.F, 0.F, 0.F, 0.F, 0.F},
+                               {0.5F, -0.5F, -0.5F, 1.F, 0.F, 1.F, 1.F, 0.F},
+                               {0.5F, 0.5F, 0.5F, 1.F, 1.F, 0.F, 0.F, 1.F},
+                               {0.5F, 0.5F, -0.5F, 1.F, 1.F, 1.F, 1.F, 1.F},
+
+                               {-0.5F, -0.5F, -0.5F, 0.F, 0.F, 1.F, 0.F, 0.F},
+                               {0.5F, -0.5F, -0.5F, 1.F, 0.F, 1.F, 1.F, 0.F},
+                               {-0.5F, 0.5F, -0.5F, 0.F, 1.F, 1.F, 0.F, 1.F},
+                               {0.5F, 0.5F, -0.5F, 1.F, 1.F, 1.F, 1.F, 1.F},
+
+                               {-0.5F, -0.5F, -0.5F, 0.F, 0.F, 1.F, 0.F, 0.F},
+                               {-0.5F, -0.5F, 0.5F, 0.F, 0.F, 0.F, 1.F, 0.F},
+                               {-0.5F, 0.5F, -0.5F, 0.F, 1.F, 1.F, 0.F, 1.F},
+                               {-0.5F, 0.5F, 0.5F, 0.F, 1.F, 0.F, 1.F, 1.F},
+
+                               {0.5F, -0.5F, 0.5F, 1.F, 0.F, 0.F, 0.F, 0.F},
+                               {-0.5F, -0.5F, 0.5F, 0.F, 0.F, 0.F, 1.F, 0.F},
+                               {0.5F, -0.5F, -0.5F, 1.F, 0.F, 1.F, 0.F, 1.F},
+                               {-0.5F, -0.5F, -0.5F, 0.F, 0.F, 1.F, 1.F, 1.F},
+
+                               {-0.5F, 0.5F, 0.5F, 0.F, 1.F, 0.F, 0.F, 0.F},
+                               {0.5F, 0.5F, 0.5F, 1.F, 1.F, 0.F, 1.F, 0.F},
+                               {-0.5F, 0.5F, -0.5F, 0.F, 1.F, 1.F, 0.F, 1.F},
+                               {0.5F, 0.5F, -0.5F, 1.F, 1.F, 1.F, 1.F, 1.F}};
+constexpr Tri_inds TRI_INDS[] = {{0, 1, 2},    {2, 1, 3},    {4, 5, 6},
+                                 {6, 5, 7},    {8, 9, 10},   {10, 9, 11},
+                                 {12, 13, 14}, {14, 13, 15}, {16, 17, 18},
+                                 {18, 17, 19}, {20, 21, 22}, {22, 21, 23}};
 } // namespace cube
 
 namespace demo {
