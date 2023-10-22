@@ -39,7 +39,7 @@ struct Program {
   std::unique_ptr<gl::Vertex_array_names> vertex_array_names;
   std::unique_ptr<gl::Buffer_names> buffer_names;
   std::unique_ptr<gl::Shader_program> shader_program;
-  std::unique_ptr<gl::Textures> textures;
+  std::unique_ptr<gl::Texture_names> texture_names;
 };
 
 int main() {
@@ -106,8 +106,8 @@ void init(Program &prog) {
   // performance-no-int-to-ptr)
   const png::Image image(config::demo::camera::TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
-  prog.textures = std::make_unique<gl::Textures>(1);
-  const auto texture_name = prog.textures->vector()[0];
+  prog.texture_names = std::make_unique<gl::Texture_names>(1);
+  const auto texture_name = prog.texture_names->vector()[0];
   glBindTexture(GL_TEXTURE_2D, texture_name);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -144,7 +144,7 @@ void render(Program &prog) {
   glUseProgram(shader_prog_id);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, prog.textures->vector()[0]);
+  glBindTexture(GL_TEXTURE_2D, prog.texture_names->vector()[0]);
 
   float time = glfwGetTime();
   glm::mat4 trans{1.f};

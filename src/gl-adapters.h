@@ -59,12 +59,12 @@ private:
   GLuint _id;
 };
 
-class Textures {
+class Texture_names {
 public:
-  explicit Textures(GLsizei size) : _names(size) {
+  explicit Texture_names(GLsizei size) : _names(size) {
     glGenTextures(size, _names.data());
   }
-  ~Textures() { glDeleteTextures(_names.size(), _names.data()); }
+  ~Texture_names() { glDeleteTextures(_names.size(), _names.data()); }
 
   const auto &vector() { return _names; }
 

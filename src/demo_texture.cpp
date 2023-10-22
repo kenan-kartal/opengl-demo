@@ -38,7 +38,7 @@ struct Program {
   std::unique_ptr<gl::Shader> vert_shader;
   std::unique_ptr<gl::Shader> frag_shader;
   std::unique_ptr<gl::Shader_program> shader_program;
-  std::unique_ptr<gl::Textures> textures;
+  std::unique_ptr<gl::Texture_names> texture_names;
 };
 
 int main() {
@@ -110,9 +110,9 @@ void init(Program &prog) {
                           png_user_error_fn, png_user_warning_fn);
   const png::Image image1(config::demo::texture::TEXTURE1_FILENAME, nullptr,
                           png_user_error_fn, png_user_warning_fn);
-  prog.textures = std::make_unique<gl::Textures>(2);
-  const auto texture0_name = prog.textures->vector()[0];
-  const auto texture1_name = prog.textures->vector()[1];
+  prog.texture_names = std::make_unique<gl::Texture_names>(2);
+  const auto texture0_name = prog.texture_names->vector()[0];
+  const auto texture1_name = prog.texture_names->vector()[1];
   glBindTexture(GL_TEXTURE_2D, texture0_name);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -161,7 +161,7 @@ void render(Program &prog) {
   const auto shader_prog_id = prog.shader_program->id();
   glUseProgram(shader_prog_id);
 
-  const auto &texture_names = prog.textures->vector();
+  const auto &texture_names = prog.texture_names->vector();
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_names[0]);
   glActiveTexture(GL_TEXTURE1);
