@@ -19,6 +19,7 @@ struct Program;
 
 void init(Program &prog);
 void render(Program &prog);
+void update(Program &prog, GLFWwindow *window, float delta);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
@@ -38,9 +39,14 @@ int main() {
     init(prog);
 
     GLFWwindow *window = prog.window->handle();
+    float last = glfwGetTime();
     while (glfwWindowShouldClose(window) != GLFW_TRUE) {
-      render(prog);
+      float now = glfwGetTime();
+      float delta = now - last;
+      last = now;
       glfwPollEvents();
+      update(prog, window, delta);
+      render(prog);
       glfwSwapBuffers(window);
     }
   } catch (const std::exception &except) {
@@ -120,6 +126,8 @@ void init(Program &prog) {
 
   glUseProgram(shader_program_id);
   glUniform1i(glGetUniformLocation(shader_program_id, "texture0"), 0);
+
+  prog.cam.set_pos({0.F, 0.F, 30.F});
 }
 
 void render(Program &prog) {
@@ -142,8 +150,6 @@ void render(Program &prog) {
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
 
   Camera &cam = prog.cam;
-  cam.set_pos({sinf(time) * 25, 0.F, cosf(time) * 25});
-  cam.set_view(-cam.pos());
   glm::mat4 view = cam.look();
   glm::mat4 projection =
       glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
@@ -174,5 +180,30 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
+}
+
+void update(Program &prog, GLFWwindow *window, float delta) {
+  Camera &cam = prog.cam;
+  glm::vec3 pos = cam.pos();
+  const float cam_speed = 10.F;
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    pos += cam.view() * cam_speed * delta;
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    pos += cam.view() * -cam_speed * delta;
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    pos += glm::cross(cam.view(), cam.up()) * cam_speed * delta;
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    pos += -glm::cross(cam.view(), cam.up()) * cam_speed * delta;
+  }
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+    pos += cam.up() * cam_speed * delta;
+  }
+  if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+    pos += -cam.up() * cam_speed * delta;
+  }
+  cam.set_pos(pos);
 }
 } // namespace demo::camera
