@@ -162,11 +162,10 @@ void render(Program &prog) {
   GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
   glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
-  for (int i = 0; i < 9; ++i) {
-    for (int j = 0; j < 9; ++j) {
-      for (int k = 0; k < 9; ++k) {
-        glm::vec3 translation{-6.F + i * 1.5F, -6.F + j * 1.5F,
-                              -6.F + k * 1.5F};
+  for (int i = 0; i < 6; ++i) {
+    for (int j = 0; j < 6; ++j) {
+      for (int k = 0; k < 6; ++k) {
+        glm::vec3 translation{-6.F + i * 2.F, -6.F + j * 2.F, -6.F + k * 2.F};
         glm::mat4 model{1.F};
         model = glm::translate(model, translation);
         GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
