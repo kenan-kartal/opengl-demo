@@ -197,10 +197,11 @@ void update(Program &prog, GLFWwindow *window) {
     pos += cam.view() * -cam_speed * delta;
   }
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    pos += glm::cross(cam.view(), cam.up()) * cam_speed * delta;
+    pos += glm::normalize(glm::cross(cam.view(), cam.up())) * cam_speed * delta;
   }
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    pos += -glm::cross(cam.view(), cam.up()) * cam_speed * delta;
+    pos +=
+        -glm::normalize(glm::cross(cam.view(), cam.up())) * cam_speed * delta;
   }
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     pos += cam.up() * cam_speed * delta;

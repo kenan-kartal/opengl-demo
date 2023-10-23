@@ -40,7 +40,7 @@ public:
 private:
   void update_from_view() {
     glm::vec3 right{glm::cross(_up, -_view)};
-    _up = glm::cross(-_view, right);
+    _up = glm::normalize(glm::cross(-_view, right));
     _pitch = glm::asin(_view.y);
     _yaw = glm::acos(_view.x / glm::cos(_pitch));
   }
@@ -51,7 +51,7 @@ private:
     _view.z = glm::sin(_yaw) * glm::cos(_pitch);
     _up = {0.F, 1.F, 0.F};
     glm::vec3 right{glm::cross(_up, -_view)};
-    _up = glm::cross(-_view, right);
+    _up = glm::normalize(glm::cross(-_view, right));
   }
 
 private:
