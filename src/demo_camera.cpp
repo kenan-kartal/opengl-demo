@@ -19,7 +19,8 @@ struct Program;
 
 void init(Program &prog);
 void render(Program &prog);
-void update(Program &prog, GLFWwindow *window);
+void start(Program &prog);
+void update(Program &prog);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
@@ -47,7 +48,7 @@ int main() {
       prog.delta = now - last;
       last = now;
       glfwPollEvents();
-      update(prog, window);
+      update(prog);
       render(prog);
       glfwSwapBuffers(window);
     }
@@ -178,14 +179,16 @@ void render(Program &prog) {
   }
 }
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action,
-                  int mods) {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-  }
+void start(Program &prog) {
+  glfwPollEvents();
+  GLFWwindow *window = prog.window->handle();
+  double mouse_x, mouse_y;
+  glfwGetCursorPos(window, &mouse_x, &mouse_y);
+  prog.mouse_pos = {mouse_x, mouse_y};
 }
 
-void update(Program &prog, GLFWwindow *window) {
+void update(Program &prog) {
+  GLFWwindow *window = prog.window->handle();
   float delta = prog.delta;
   Camera &cam = prog.cam;
   glm::vec3 pos = cam.pos();
@@ -226,5 +229,12 @@ void update(Program &prog, GLFWwindow *window) {
     pitch = glm::radians(-89.F);
   }
   cam.set_angles(yaw, pitch);
+}
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mods) {
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+  }
 }
 } // namespace demo::camera
