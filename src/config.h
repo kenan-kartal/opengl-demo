@@ -105,32 +105,8 @@ namespace demo {
 namespace simple {
 constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
 constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
+constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
 } // namespace simple
-
-namespace texture {
-constexpr const char *VERT_SHADER_FILENAME = "res/texture.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/texture.frag";
-constexpr const char *TEXTURE0_FILENAME = "res/bricks.png";
-constexpr const char *TEXTURE1_FILENAME = "res/metal.png";
-} // namespace texture
-
-namespace transformation {
-constexpr const char *VERT_SHADER_FILENAME = "res/transformation.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/transformation.frag";
-constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
-} // namespace transformation
-
-namespace coordinates {
-constexpr const char *VERT_SHADER_FILENAME = "res/coordinates.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/coordinates.frag";
-constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
-} // namespace coordinates
-
-namespace camera {
-constexpr const char *VERT_SHADER_FILENAME = "res/coordinates.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/coordinates.frag";
-constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
-} // namespace camera
 } // namespace demo
 
 } // namespace config

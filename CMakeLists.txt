@@ -22,13 +22,9 @@ find_package(glm REQUIRED)
 add_executable(opengl-demo
 	src/main.cpp
 	src/glfw-adapters.cpp
-	src/demo_simple.cpp
-	src/demo_texture.cpp
 	src/png-adapters.cpp
-	src/demo_transformation.cpp
-	src/demo_coordinates.cpp
 	src/common.cpp
-	src/demo_camera.cpp
+	src/demo_simple.cpp
 )
 target_link_libraries(opengl-demo PRIVATE glad glfw png glm::glm)
 
