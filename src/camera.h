@@ -17,6 +17,7 @@ public:
   glm::vec3 up() const { return _up; }
   float yaw() const { return _yaw; }
   float pitch() const { return _pitch; }
+  float fov() const { return _fov; }
 
   void set_pos(const glm::vec3 &pos) { _pos = pos; }
 
@@ -30,6 +31,8 @@ public:
     _pitch = pitch;
     update_from_angles();
   }
+
+  void set_fov(float fov) { _fov = fov; }
 
   glm::mat4 look() const { return glm::lookAt(_pos, _pos + _view, _up); }
 
@@ -60,6 +63,7 @@ private:
   glm::vec3 _up{0.F, 1.F, 0.F};
   float _yaw{glm::radians(-90.F)};
   float _pitch{0.F};
+  float _fov{glm::radians(45.F)};
 };
 
 #endif

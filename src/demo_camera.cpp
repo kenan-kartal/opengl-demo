@@ -17,12 +17,15 @@
 namespace demo::camera {
 struct Program;
 
+Program *program;
+
 void init(Program &prog);
 void render(Program &prog);
 void start(Program &prog);
 void update(Program &prog);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
 struct Program {
   std::unique_ptr<glfw::Init> init;
@@ -39,8 +42,10 @@ struct Program {
 int main() {
   try {
     Program prog;
+    program = &prog;
     init(prog);
 
+    start(prog);
     GLFWwindow *window = prog.window->handle();
     float last = glfwGetTime();
     while (glfwWindowShouldClose(window) != GLFW_TRUE) {
@@ -77,8 +82,9 @@ void init(Program &prog) {
   gl_query();
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  glfwSetKeyCallback(window, key_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetKeyCallback(window, key_callback);
+  glfwSetScrollCallback(window, scroll_callback);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -148,15 +154,13 @@ void render(Program &prog) {
   auto *window = prog.window->handle();
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  float time = glfwGetTime();
   float aspect = static_cast<float>(width) / static_cast<float>(height);
 
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
 
   Camera &cam = prog.cam;
   glm::mat4 view = cam.look();
-  glm::mat4 projection =
-      glm::perspective(glm::radians(45.F), aspect, 0.1F, 100.F);
+  glm::mat4 projection = glm::perspective(cam.fov(), aspect, 0.1F, 100.F);
   GLint view_loc{glGetUniformLocation(shader_prog_id, "view")};
   glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
   GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
@@ -235,5 +239,16 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  float fov = program->cam.fov();
+  fov -= yoffset * 0.1F;
+  if (fov < glm::radians(1.F)) {
+    fov = glm::radians(1.F);
+  } else if (fov > glm::radians(45.F)) {
+    fov = glm::radians(45.F);
+  }
+  program->cam.set_fov(fov);
 }
 } // namespace demo::camera
