@@ -19,7 +19,7 @@ struct Program;
 
 void init(Program &prog);
 void render(Program &prog);
-void update(Program &prog, GLFWwindow *window, float delta);
+void update(Program &prog, GLFWwindow *window);
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
 
@@ -31,6 +31,8 @@ struct Program {
   std::unique_ptr<gl::Shader_program> shader_program;
   std::unique_ptr<gl::Texture_names> texture_names;
   Camera cam{};
+  float delta{};
+  glm::vec2 mouse_pos{};
 };
 
 int main() {
@@ -42,10 +44,10 @@ int main() {
     float last = glfwGetTime();
     while (glfwWindowShouldClose(window) != GLFW_TRUE) {
       float now = glfwGetTime();
-      float delta = now - last;
+      prog.delta = now - last;
       last = now;
       glfwPollEvents();
-      update(prog, window, delta);
+      update(prog, window);
       render(prog);
       glfwSwapBuffers(window);
     }
@@ -75,6 +77,7 @@ void init(Program &prog) {
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -182,7 +185,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
   }
 }
 
-void update(Program &prog, GLFWwindow *window, float delta) {
+void update(Program &prog, GLFWwindow *window) {
+  float delta = prog.delta;
   Camera &cam = prog.cam;
   glm::vec3 pos = cam.pos();
   const float cam_speed = 10.F;
@@ -205,5 +209,21 @@ void update(Program &prog, GLFWwindow *window, float delta) {
     pos += -cam.up() * cam_speed * delta;
   }
   cam.set_pos(pos);
+  double mouse_x, mouse_y;
+  glfwGetCursorPos(window, &mouse_x, &mouse_y);
+  glm::vec2 mouse_delta{mouse_x - prog.mouse_pos.x, mouse_y - prog.mouse_pos.y};
+  prog.mouse_pos.x = mouse_x;
+  prog.mouse_pos.y = mouse_y;
+  const float mouse_sensitivity = 0.001F;
+  float yaw = cam.yaw();
+  float pitch = cam.pitch();
+  yaw += mouse_delta.x * mouse_sensitivity;
+  pitch -= mouse_delta.y * mouse_sensitivity;
+  if (pitch > glm::radians(89.F)) {
+    pitch = glm::radians(89.F);
+  } else if (pitch < glm::radians(-89.F)) {
+    pitch = glm::radians(-89.F);
+  }
+  cam.set_angles(yaw, pitch);
 }
 } // namespace demo::camera
