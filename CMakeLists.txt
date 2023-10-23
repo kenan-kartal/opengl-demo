@@ -26,6 +26,7 @@ add_executable(opengl-demo
 	src/common.cpp
 	src/demo_simple.cpp
 )
+target_include_directories(opengl-demo PRIVATE include)
 target_link_libraries(opengl-demo PRIVATE glad glfw png glm::glm)
 
 file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res SYMBOLIC)
