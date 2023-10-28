@@ -46,6 +46,7 @@ struct Program {
   Camera cam{};
   float delta{};
   glm::vec2 mouse_pos{};
+  glm::vec3 light_pos{-8.F, 8.F, 8.F};
 };
 
 int main() {
@@ -161,7 +162,7 @@ void init(Program &prog) {
   glUseProgram(shader_program_object_id);
   glUniform1i(glGetUniformLocation(shader_program_object_id, "texture0"), 0);
   glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.f, 1.f, 1.f);
-  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_pos"), -8.F, 8.F, 8.F);
+  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_pos"), prog.light_pos.x, prog.light_pos.y, prog.light_pos.z);
 
   gl::Shader vert_shader_light{GL_VERTEX_SHADER};
   compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
@@ -236,9 +237,8 @@ void render(Program &prog) {
   projection_loc = glGetUniformLocation(shader_prog_id, "projection");
   glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
-  glm::vec3 translation{-8.F, 8.F, 8.F};
   glm::mat4 model{1.F};
-  model = glm::translate(model, translation);
+  model = glm::translate(model, prog.light_pos);
   model = glm::scale(model, glm::vec3{0.5F});
   GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
   glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
