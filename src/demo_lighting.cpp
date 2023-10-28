@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -116,7 +117,7 @@ void init(Program &prog) {
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
-                        reinterpret_cast<void *>(6 * sizeof(float)));
+                        reinterpret_cast<void *>(offsetof(config::Vertex, tex)));
   glEnableVertexAttribArray(1);
 
   const auto light_vertex_array_name = vertex_array_names[1];
