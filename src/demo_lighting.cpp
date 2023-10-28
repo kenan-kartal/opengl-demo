@@ -162,7 +162,6 @@ void init(Program &prog) {
   glUseProgram(shader_program_object_id);
   glUniform1i(glGetUniformLocation(shader_program_object_id, "texture0"), 0);
   glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.f, 1.f, 1.f);
-  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_pos"), prog.light_pos.x, prog.light_pos.y, prog.light_pos.z);
 
   gl::Shader vert_shader_light{GL_VERTEX_SHADER};
   compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
@@ -185,11 +184,14 @@ void render(Program &prog) {
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
   auto *window = prog.window->handle();
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   float aspect = static_cast<float>(width) / static_cast<float>(height);
+  double time = glfwGetTime();
+  prog.light_pos.x = -8.0 * cos(time);
+  prog.light_pos.y = 8.0 * cos(time);
+  prog.light_pos.z = 8.0 * sin(time);
 
   auto shader_prog_id = prog.shader_program_object->id();
   glUseProgram(shader_prog_id);
@@ -208,6 +210,8 @@ void render(Program &prog) {
   GLint view_pos_loc{glGetUniformLocation(shader_prog_id, "view_pos")};
   glm::vec3 cam_pos{cam.pos()};
   glUniform3f(view_pos_loc, cam_pos.x, cam_pos.y, cam_pos.z);
+  GLint light_pos_loc{glGetUniformLocation(shader_prog_id, "light_pos")};
+  glUniform3f(light_pos_loc, prog.light_pos.x, prog.light_pos.y, prog.light_pos.z);
 
   for (int i = 0; i < 6; ++i) {
     for (int j = 0; j < 6; ++j) {
