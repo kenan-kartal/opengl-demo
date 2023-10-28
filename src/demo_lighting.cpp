@@ -92,11 +92,13 @@ void init(Program &prog) {
 
   glEnable(GL_DEPTH_TEST);
 
-  prog.vertex_array_names = std::make_unique<gl::Vertex_array_names>(1);
-  const auto &vector_array_names = prog.vertex_array_names->vector();
-  glBindVertexArray(vector_array_names[0]);
+  prog.vertex_array_names = std::make_unique<gl::Vertex_array_names>(2);
   prog.buffer_names = std::make_unique<gl::Buffer_names>(2);
+  const auto &vertex_array_names = prog.vertex_array_names->vector();
   const auto &buffer_names = prog.buffer_names->vector();
+
+  const auto object_vertex_array_name = vertex_array_names[0];
+  glBindVertexArray(object_vertex_array_name);
   const auto vertex_buffer_name = buffer_names[0];
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
   glBufferData(GL_ARRAY_BUFFER, sizeof(config::cube::VERTICES),
@@ -113,6 +115,18 @@ void init(Program &prog) {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(1);
+
+  const auto light_vertex_array_name = vertex_array_names[1];
+  glBindVertexArray(object_vertex_array_name);
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
+                        reinterpret_cast<void *>(0));
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
+                        reinterpret_cast<void *>(6 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
   const png::Image image(TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
   prog.texture_names = std::make_unique<gl::Texture_names>(1);
