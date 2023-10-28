@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
@@ -16,7 +17,7 @@
 #include <stdexcept>
 
 namespace demo::lighting {
-constexpr const char *VERT_SHADER_OBJECT_FILENAME = "res/simple.vert";
+constexpr const char *VERT_SHADER_OBJECT_FILENAME = "res/lighting_object.vert";
 constexpr const char *FRAG_SHADER_OBJECT_FILENAME = "res/lighting_object.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
 constexpr const char *VERT_SHADER_LIGHT_FILENAME = "res/lighting_light.vert";
@@ -116,9 +117,13 @@ void init(Program &prog) {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
-                        reinterpret_cast<void *>(offsetof(config::Vertex, tex)));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
+                        reinterpret_cast<void *>(offsetof(config::Vertex, normal)));
+  std::cout << offsetof(config::Vertex, normal) << " <- offset\n";
   glEnableVertexAttribArray(1);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
+                        reinterpret_cast<void *>(offsetof(config::Vertex, tex)));
+  glEnableVertexAttribArray(2);
 
   const auto light_vertex_array_name = vertex_array_names[1];
   glBindVertexArray(light_vertex_array_name);
@@ -156,6 +161,7 @@ void init(Program &prog) {
   glUseProgram(shader_program_object_id);
   glUniform1i(glGetUniformLocation(shader_program_object_id, "texture0"), 0);
   glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.f, 1.f, 1.f);
+  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_pos"), -8.F, 8.F, 8.F);
 
   gl::Shader vert_shader_light{GL_VERTEX_SHADER};
   compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
@@ -168,7 +174,7 @@ void init(Program &prog) {
   link_shader_program(shader_program_light_id);
 
   glUseProgram(shader_program_light_id);
-  glUniform3f(glGetUniformLocation(shader_program_light_id, "light_color"), 1.f, 1.f, 1.f);
+  glUniform3f(glGetUniformLocation(shader_program_light_id, "light_color"), 1.F, 1.F, 1.F);
 
   prog.cam.set_pos({0.F, 0.F, 30.F});
 }
@@ -207,6 +213,9 @@ void render(Program &prog) {
         model = glm::translate(model, translation);
         GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+        glm::mat4 model_inv_trans{glm::inverseTranspose(model)};
+        GLint model_inv_trans_loc{glGetUniformLocation(shader_prog_id, "model_inv_trans")};
+        glUniformMatrix4fv(model_inv_trans_loc, 1, GL_FALSE, glm::value_ptr(model_inv_trans));
         glDrawElements(GL_TRIANGLES,
                        sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
                        GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
