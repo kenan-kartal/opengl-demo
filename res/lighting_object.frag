@@ -7,5 +7,9 @@ uniform sampler2D texture0;
 uniform vec3 light_color;
 
 void main() {
-    frag_col = texture(texture0, tex_coord) * vec4(light_color, 1.0);
+	vec4 sample = texture(texture0, tex_coord);
+	vec3 obj_color = sample.xyz;
+	vec3 ambient = light_color * 0.2;
+	vec3 result = ambient * obj_color;
+	frag_col = vec4(result, 1.0);
 }
