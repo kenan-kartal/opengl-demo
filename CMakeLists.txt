@@ -25,6 +25,7 @@ add_executable(opengl-demo
 	src/png-adapters.cpp
 	src/common.cpp
 	src/demo_simple.cpp
+	src/demo_lighting.cpp
 )
 target_include_directories(opengl-demo PRIVATE include)
 target_link_libraries(opengl-demo PRIVATE glad glfw png glm::glm)

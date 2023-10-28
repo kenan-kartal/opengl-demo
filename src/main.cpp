@@ -1,11 +1,15 @@
 #include <cstring>
 #include <iostream>
 
-constexpr const char *DEMOS[] = {"simple"};
+constexpr const char *DEMOS[] = {"simple", "lighting"};
 
 namespace demo {
 namespace simple {
 extern int main();
+}
+
+namespace lighting {
+	extern int main();
 }
 } // namespace demo
 
@@ -20,6 +24,9 @@ int main(int argc, char *argv[]) {
   const char *prog = argv[1];
   if (std::strcmp(prog, DEMOS[0]) == 0) {
     return demo::simple::main();
+  }
+  if (std::strcmp(prog, DEMOS[1]) == 0) {
+    return demo::lighting::main();
   }
   print_usage(invoc);
   return 1;
