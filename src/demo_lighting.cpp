@@ -204,6 +204,9 @@ void render(Program &prog) {
   glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
   GLint projection_loc{glGetUniformLocation(shader_prog_id, "projection")};
   glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+  GLint view_pos_loc{glGetUniformLocation(shader_prog_id, "view_pos")};
+  glm::vec3 cam_pos{cam.pos()};
+  glUniform3f(view_pos_loc, cam_pos.x, cam_pos.y, cam_pos.z);
 
   for (int i = 0; i < 6; ++i) {
     for (int j = 0; j < 6; ++j) {
