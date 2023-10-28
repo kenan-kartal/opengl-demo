@@ -15,6 +15,10 @@
 #include <stdexcept>
 
 namespace demo::lighting {
+constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
+constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
+constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
+
 struct Program;
 
 Program *program;
@@ -109,7 +113,7 @@ void init(Program &prog) {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(6 * sizeof(float)));
   glEnableVertexAttribArray(1);
-  const png::Image image(config::demo::simple::TEXTURE_FILENAME, nullptr,
+  const png::Image image(TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
   prog.texture_names = std::make_unique<gl::Texture_names>(1);
   const auto texture_name = prog.texture_names->vector()[0];
@@ -125,9 +129,9 @@ void init(Program &prog) {
   glGenerateMipmap(GL_TEXTURE_2D);
 
   gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(config::demo::simple::VERT_SHADER_FILENAME, vert_shader.id());
+  compile_shader(VERT_SHADER_FILENAME, vert_shader.id());
   gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(config::demo::simple::FRAG_SHADER_FILENAME, frag_shader.id());
+  compile_shader(FRAG_SHADER_FILENAME, frag_shader.id());
   prog.shader_program = std::make_unique<gl::Shader_program>();
   const auto shader_program_id = prog.shader_program->id();
   glAttachShader(shader_program_id, vert_shader.id());

@@ -100,15 +100,6 @@ constexpr Tri_inds TRI_INDS[] = {{0, 1, 2},    {2, 1, 3},    {4, 5, 6},
                                  {12, 13, 14}, {14, 13, 15}, {16, 17, 18},
                                  {18, 17, 19}, {20, 21, 22}, {22, 21, 23}};
 } // namespace cube
-
-namespace demo {
-namespace simple {
-constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
-constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
-} // namespace simple
-} // namespace demo
-
 } // namespace config
 
 #endif
