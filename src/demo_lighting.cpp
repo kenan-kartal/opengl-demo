@@ -15,9 +15,11 @@
 #include <stdexcept>
 
 namespace demo::lighting {
-constexpr const char *VERT_SHADER_FILENAME = "res/simple.vert";
-constexpr const char *FRAG_SHADER_FILENAME = "res/simple.frag";
+constexpr const char *VERT_SHADER_OBJECT_FILENAME = "res/simple.vert";
+constexpr const char *FRAG_SHADER_OBJECT_FILENAME = "res/lighting_object.frag";
 constexpr const char *TEXTURE_FILENAME = "res/bricks.png";
+constexpr const char *VERT_SHADER_LIGHT_FILENAME = "res/lighting_light.vert";
+constexpr const char *FRAG_SHADER_LIGHT_FILENAME = "res/lighting_light.frag";
 
 struct Program;
 
@@ -36,7 +38,8 @@ struct Program {
   std::unique_ptr<glfw::Window> window;
   std::unique_ptr<gl::Vertex_array_names> vertex_array_names;
   std::unique_ptr<gl::Buffer_names> buffer_names;
-  std::unique_ptr<gl::Shader_program> shader_program;
+  std::unique_ptr<gl::Shader_program> shader_program_object;
+  std::unique_ptr<gl::Shader_program> shader_program_light;
   std::unique_ptr<gl::Texture_names> texture_names;
   Camera cam{};
   float delta{};
@@ -117,15 +120,12 @@ void init(Program &prog) {
   glEnableVertexAttribArray(1);
 
   const auto light_vertex_array_name = vertex_array_names[1];
-  glBindVertexArray(object_vertex_array_name);
+  glBindVertexArray(light_vertex_array_name);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_name);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vert_indices_buffer_name);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(0));
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
-                        reinterpret_cast<void *>(6 * sizeof(float)));
-  glEnableVertexAttribArray(1);
 
   const png::Image image(TEXTURE_FILENAME, nullptr,
                          png_user_error_fn, png_user_warning_fn);
@@ -142,18 +142,32 @@ void init(Program &prog) {
                GL_RGBA, GL_UNSIGNED_BYTE, image.vector().data());
   glGenerateMipmap(GL_TEXTURE_2D);
 
-  gl::Shader vert_shader{GL_VERTEX_SHADER};
-  compile_shader(VERT_SHADER_FILENAME, vert_shader.id());
-  gl::Shader frag_shader{GL_FRAGMENT_SHADER};
-  compile_shader(FRAG_SHADER_FILENAME, frag_shader.id());
-  prog.shader_program = std::make_unique<gl::Shader_program>();
-  const auto shader_program_id = prog.shader_program->id();
-  glAttachShader(shader_program_id, vert_shader.id());
-  glAttachShader(shader_program_id, frag_shader.id());
-  link_shader_program(shader_program_id);
+  gl::Shader vert_shader_object{GL_VERTEX_SHADER};
+  compile_shader(VERT_SHADER_OBJECT_FILENAME, vert_shader_object.id());
+  gl::Shader frag_shader_object{GL_FRAGMENT_SHADER};
+  compile_shader(FRAG_SHADER_OBJECT_FILENAME, frag_shader_object.id());
+  prog.shader_program_object = std::make_unique<gl::Shader_program>();
+  const auto shader_program_object_id = prog.shader_program_object->id();
+  glAttachShader(shader_program_object_id, vert_shader_object.id());
+  glAttachShader(shader_program_object_id, frag_shader_object.id());
+  link_shader_program(shader_program_object_id);
 
-  glUseProgram(shader_program_id);
-  glUniform1i(glGetUniformLocation(shader_program_id, "texture0"), 0);
+  glUseProgram(shader_program_object_id);
+  glUniform1i(glGetUniformLocation(shader_program_object_id, "texture0"), 0);
+  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.f, 1.f, 1.f);
+
+  gl::Shader vert_shader_light{GL_VERTEX_SHADER};
+  compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
+  gl::Shader frag_shader_light{GL_FRAGMENT_SHADER};
+  compile_shader(FRAG_SHADER_LIGHT_FILENAME, frag_shader_light.id());
+  prog.shader_program_light = std::make_unique<gl::Shader_program>();
+  const auto shader_program_light_id = prog.shader_program_light->id();
+  glAttachShader(shader_program_light_id, vert_shader_light.id());
+  glAttachShader(shader_program_light_id, frag_shader_light.id());
+  link_shader_program(shader_program_light_id);
+
+  glUseProgram(shader_program_light_id);
+  glUniform3f(glGetUniformLocation(shader_program_light_id, "light_color"), 1.f, 1.f, 1.f);
 
   prog.cam.set_pos({0.F, 0.F, 30.F});
 }
@@ -163,17 +177,17 @@ void render(Program &prog) {
   glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  const auto shader_prog_id = prog.shader_program->id();
-  glUseProgram(shader_prog_id);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, prog.texture_names->vector()[0]);
 
   auto *window = prog.window->handle();
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   float aspect = static_cast<float>(width) / static_cast<float>(height);
 
+  auto shader_prog_id = prog.shader_program_object->id();
+  glUseProgram(shader_prog_id);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, prog.texture_names->vector()[0]);
   glBindVertexArray(prog.vertex_array_names->vector()[0]);
 
   Camera &cam = prog.cam;
@@ -198,6 +212,26 @@ void render(Program &prog) {
       }
     }
   }
+
+  shader_prog_id = prog.shader_program_light->id();
+  glUseProgram(shader_prog_id);
+
+  glBindVertexArray(prog.vertex_array_names->vector()[1]);
+
+  view_loc = glGetUniformLocation(shader_prog_id, "view");
+  glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+  projection_loc = glGetUniformLocation(shader_prog_id, "projection");
+  glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+
+  glm::vec3 translation{-8.F, 8.F, 8.F};
+  glm::mat4 model{1.F};
+  model = glm::translate(model, translation);
+  model = glm::scale(model, glm::vec3{0.5F});
+  GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
+  glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+  glDrawElements(GL_TRIANGLES,
+                 sizeof(config::cube::TRI_INDS) / sizeof(unsigned),
+                 GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
 }
 
 void start(Program &prog) {
