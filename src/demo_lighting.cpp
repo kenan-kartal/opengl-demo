@@ -47,6 +47,7 @@ struct Program {
   float delta{};
   glm::vec2 mouse_pos{};
   glm::vec3 light_pos{-8.F, 8.F, 8.F};
+  glm::vec3 light_color{1.F, 1.F, 1.F};
 };
 
 int main() {
@@ -155,9 +156,6 @@ void init(Program &prog) {
   glAttachShader(shader_program_object_id, frag_shader_object.id());
   link_shader_program(shader_program_object_id);
 
-  glUseProgram(shader_program_object_id);
-  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.F, 1.F, 1.F);
-
   gl::Shader vert_shader_light{GL_VERTEX_SHADER};
   compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
   gl::Shader frag_shader_light{GL_FRAGMENT_SHADER};
@@ -167,9 +165,6 @@ void init(Program &prog) {
   glAttachShader(shader_program_light_id, vert_shader_light.id());
   glAttachShader(shader_program_light_id, frag_shader_light.id());
   link_shader_program(shader_program_light_id);
-
-  glUseProgram(shader_program_light_id);
-  glUniform3f(glGetUniformLocation(shader_program_light_id, "light_color"), 1.F, 1.F, 1.F);
 
   prog.cam.set_pos({0.F, 0.F, 30.F});
 }
@@ -187,6 +182,9 @@ void render(Program &prog) {
   prog.light_pos.x = -8.0 * cos(time);
   prog.light_pos.y = 8.0 * cos(time);
   prog.light_pos.z = 8.0 * sin(time);
+  prog.light_color.x = cos(time * 0.3) / 2.0F + 0.5F;
+  prog.light_color.y = cos(time * 0.2) / 2.0F + 0.5F;
+  prog.light_color.z = cos(time * 0.1) / 2.0F + 0.5F;
 
   auto shader_prog_id = prog.shader_program_object->id();
   glUseProgram(shader_prog_id);
@@ -205,13 +203,23 @@ void render(Program &prog) {
   GLint view_pos_loc{glGetUniformLocation(shader_prog_id, "view_pos")};
   glm::vec3 cam_pos{cam.pos()};
   glUniform3f(view_pos_loc, cam_pos.x, cam_pos.y, cam_pos.z);
-  GLint light_pos_loc{glGetUniformLocation(shader_prog_id, "light_pos")};
+  GLint light_pos_loc{glGetUniformLocation(shader_prog_id, "light.position")};
+  GLint light_ambient_loc{glGetUniformLocation(shader_prog_id, "light.ambient")};
+  GLint light_diffuse_loc{glGetUniformLocation(shader_prog_id, "light.diffuse")};
+  GLint light_specular_loc{glGetUniformLocation(shader_prog_id, "light.specular")};
   glUniform3f(light_pos_loc, prog.light_pos.x, prog.light_pos.y, prog.light_pos.z);
+  glm::vec3 light_ambient = prog.light_color / 10.F;
+  glm::vec3 light_diffuse = prog.light_color / 2.F;
+  glm::vec3 light_specular = prog.light_color * 1.5F;
+  glUniform3fv(light_ambient_loc, 1, glm::value_ptr(light_ambient));
+  glUniform3fv(light_diffuse_loc, 1, glm::value_ptr(light_diffuse));
+  glUniform3fv(light_specular_loc, 1, glm::value_ptr(light_specular));
   GLint material_ambient_loc{glGetUniformLocation(shader_prog_id, "material.ambient")};
   GLint material_diffuse_loc{glGetUniformLocation(shader_prog_id, "material.diffuse")};
   GLint material_specular_loc{glGetUniformLocation(shader_prog_id, "material.specular")};
   GLint material_shininess_loc{glGetUniformLocation(shader_prog_id, "material.shininess")};
-  glUniform3f(material_ambient_loc, 0.1F, 0.1F, 0.1F);
+  glUniform3f(material_ambient_loc, 1.F, 1.F, 1.F);
+  glUniform1f(material_shininess_loc, 32.F);
 
   for (int i = 0; i < 6; ++i) {
     for (int j = 0; j < 6; ++j) {
@@ -219,8 +227,6 @@ void render(Program &prog) {
 	glUniform3f(material_diffuse_loc, i/5.F, j/5.F, k/5.F);
 	float specular = i / 5.F;
 	glUniform3f(material_specular_loc, specular, specular, specular);
-	float shininess = (k+1) * 32.F / 6.F;
-	glUniform1f(material_shininess_loc, shininess);
         glm::vec3 translation{-5.F + i * 2.F, -5.F + j * 2.F, -5.F + k * 2.F};
         glm::mat4 model{1.F};
         model = glm::translate(model, translation);
@@ -245,6 +251,7 @@ void render(Program &prog) {
   glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
   projection_loc = glGetUniformLocation(shader_prog_id, "projection");
   glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+  glUniform3fv(glGetUniformLocation(shader_prog_id, "color"), 1, glm::value_ptr(prog.light_color));
 
   glm::mat4 model{1.F};
   model = glm::translate(model, prog.light_pos);
