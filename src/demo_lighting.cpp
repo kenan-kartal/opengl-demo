@@ -120,11 +120,7 @@ void init(Program &prog) {
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
                         reinterpret_cast<void *>(offsetof(config::Vertex, normal)));
-  std::cout << offsetof(config::Vertex, normal) << " <- offset\n";
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(config::Vertex),
-                        reinterpret_cast<void *>(offsetof(config::Vertex, tex)));
-  glEnableVertexAttribArray(2);
 
   const auto light_vertex_array_name = vertex_array_names[1];
   glBindVertexArray(light_vertex_array_name);
@@ -160,8 +156,7 @@ void init(Program &prog) {
   link_shader_program(shader_program_object_id);
 
   glUseProgram(shader_program_object_id);
-  glUniform1i(glGetUniformLocation(shader_program_object_id, "texture0"), 0);
-  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.f, 1.f, 1.f);
+  glUniform3f(glGetUniformLocation(shader_program_object_id, "light_color"), 1.F, 1.F, 1.F);
 
   gl::Shader vert_shader_light{GL_VERTEX_SHADER};
   compile_shader(VERT_SHADER_LIGHT_FILENAME, vert_shader_light.id());
@@ -212,10 +207,20 @@ void render(Program &prog) {
   glUniform3f(view_pos_loc, cam_pos.x, cam_pos.y, cam_pos.z);
   GLint light_pos_loc{glGetUniformLocation(shader_prog_id, "light_pos")};
   glUniform3f(light_pos_loc, prog.light_pos.x, prog.light_pos.y, prog.light_pos.z);
+  GLint material_ambient_loc{glGetUniformLocation(shader_prog_id, "material.ambient")};
+  GLint material_diffuse_loc{glGetUniformLocation(shader_prog_id, "material.diffuse")};
+  GLint material_specular_loc{glGetUniformLocation(shader_prog_id, "material.specular")};
+  GLint material_shininess_loc{glGetUniformLocation(shader_prog_id, "material.shininess")};
+  glUniform3f(material_ambient_loc, 0.1F, 0.1F, 0.1F);
 
   for (int i = 0; i < 6; ++i) {
     for (int j = 0; j < 6; ++j) {
       for (int k = 0; k < 6; ++k) {
+	glUniform3f(material_diffuse_loc, i/5.F, j/5.F, k/5.F);
+	float specular = i / 5.F;
+	glUniform3f(material_specular_loc, specular, specular, specular);
+	float shininess = (k+1) * 32.F / 6.F;
+	glUniform1f(material_shininess_loc, shininess);
         glm::vec3 translation{-6.F + i * 2.F, -6.F + j * 2.F, -6.F + k * 2.F};
         glm::mat4 model{1.F};
         model = glm::translate(model, translation);
