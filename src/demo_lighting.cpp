@@ -221,7 +221,7 @@ void render(Program &prog) {
 	glUniform3f(material_specular_loc, specular, specular, specular);
 	float shininess = (k+1) * 32.F / 6.F;
 	glUniform1f(material_shininess_loc, shininess);
-        glm::vec3 translation{-6.F + i * 2.F, -6.F + j * 2.F, -6.F + k * 2.F};
+        glm::vec3 translation{-5.F + i * 2.F, -5.F + j * 2.F, -5.F + k * 2.F};
         glm::mat4 model{1.F};
         model = glm::translate(model, translation);
         GLint model_loc{glGetUniformLocation(shader_prog_id, "model")};
